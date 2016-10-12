@@ -1,10 +1,10 @@
 package de.digitalcollections.core.backend.impl.file.repository.resource.util;
 
-import java.net.URI;
-import java.util.List;
 import de.digitalcollections.core.backend.impl.file.repository.resource.resolver.FileNameResolver;
 import de.digitalcollections.core.model.api.resource.enums.ResourcePersistenceType;
 import de.digitalcollections.core.model.api.resource.exceptions.ResourceIOException;
+import java.net.URI;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +25,8 @@ public class ResolvedResourcePersistenceTypeHandler implements ResourcePersisten
 
   @Override
   public URI getUri(String key, String filenameExtension) throws ResourceIOException {
-    key = key + "." + filenameExtension;
-    FileNameResolver fileNameResolver = getFileNameResolver(key);
+    String resolvingKey = key + "." + filenameExtension;
+    FileNameResolver fileNameResolver = getFileNameResolver(resolvingKey);
     return fileNameResolver.getUri(key);
   }
 

@@ -25,7 +25,7 @@ public class ResourceRepositoryImplTest {
   private static final Logger LOGGER = LoggerFactory.getLogger(ResourceRepositoryImplTest.class);
 
   @Autowired
-  ResourceRepository resourceRepository;
+  private ResourceRepository resourceRepository;
 
   public ResourceRepositoryImplTest() {
   }
