@@ -35,6 +35,7 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     
     <!-- Plugin versions -->
+    <version.jacoco-maven-plugin>0.7.7.201606060606</version.jacoco-maven-plugin>
     <version.maven-compiler-plugin>3.1</version.maven-compiler-plugin>
     <version.versions-maven-plugin>2.3</version.versions-maven-plugin>
   </properties>
@@ -54,6 +55,25 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>versions-maven-plugin</artifactId>
         <version>${version.versions-maven-plugin}</version>
+      </plugin>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${version.jacoco-maven-plugin}</version>
+        <executions>
+          <execution>
+            <id>pre-unit-test</id>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <phase>test</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
@@ -120,4 +140,14 @@
       </dependency>
     </dependencies>
   </dependencyManagement>
+  
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${version.jacoco-maven-plugin}</version>
+      </plugin>
+    </plugins>
+  </reporting>
 </project>
