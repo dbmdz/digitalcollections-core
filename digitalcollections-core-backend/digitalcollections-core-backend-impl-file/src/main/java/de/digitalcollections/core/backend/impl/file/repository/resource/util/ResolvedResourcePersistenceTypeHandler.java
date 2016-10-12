@@ -27,7 +27,7 @@ public class ResolvedResourcePersistenceTypeHandler implements ResourcePersisten
   public URI getUri(String key, String filenameExtension) throws ResourceIOException {
     String resolvingKey = key + "." + filenameExtension;
     FileNameResolver fileNameResolver = getFileNameResolver(resolvingKey);
-    return fileNameResolver.getUri(key);
+    return fileNameResolver.getUri(resolvingKey);
   }
 
   public FileNameResolver getFileNameResolver(String key) throws ResourceIOException {
