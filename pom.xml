@@ -12,6 +12,7 @@
   <description>
     Parent for all DigitalCollections Core projects/modules: Model, Frontend, Business, Backend.
   </description>
+  <url>https://github.com/dbmdz/digitalcollections-core</url>
   
   <modules>
     <module>digitalcollections-core-model</module>
@@ -37,6 +38,10 @@
     <!-- Plugin versions -->
     <version.jacoco-maven-plugin>0.7.7.201606060606</version.jacoco-maven-plugin>
     <version.maven-compiler-plugin>3.1</version.maven-compiler-plugin>
+    <version.maven-gpg-plugin>1.6</version.maven-gpg-plugin>
+    <version.maven-javadoc-plugin>2.10.4</version.maven-javadoc-plugin>
+    <version.maven-source-plugin>3.0.1</version.maven-source-plugin>
+    <version.nexus-staging-maven-plugin>1.6.7</version.nexus-staging-maven-plugin>
     <version.versions-maven-plugin>2.3</version.versions-maven-plugin>
   </properties>
   
@@ -50,6 +55,32 @@
           <source>${maven.compiler.source}</source>
           <target>${maven.compiler.target}</target>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${version.maven-javadoc-plugin}</version>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>${version.maven-source-plugin}</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -74,6 +105,17 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <version>${version.nexus-staging-maven-plugin}</version>
+        <extensions>true</extensions>
+        <configuration>
+          <serverId>ossrh</serverId>
+          <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+          <autoReleaseAfterClose>true</autoReleaseAfterClose>
+        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -141,6 +183,37 @@
     </dependencies>
   </dependencyManagement>
   
+  <developers>
+    <developer>
+      <name>Christoph Lorenz</name>
+      <email>christoph.lorenz@bsb-muenchen.de</email>
+      <id>clorenz</id>
+    </developer>
+    <developer>
+      <name>Johannes Baiter</name>
+      <email>johannes.baiter@bsb-muenchen.de</email>
+      <id>jbaiter</id>
+    </developer>
+    <developer>
+      <name>Marcus Bitzl</name>
+      <email>marcus@bitzl.me</email>
+      <id>bitzl</id>
+    </developer>
+    <developer>
+      <name>Ralf Eichinger</name>
+      <email>ralf.eichinger@gmail.com</email>
+      <id>datazuul</id>
+    </developer>
+  </developers>
+  
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>https://github.com/dbmdz/digitalcollections-core/blob/master/LICENSE.md</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  
   <reporting>
     <plugins>
       <plugin>
@@ -150,4 +223,42 @@
       </plugin>
     </plugins>
   </reporting>
+  
+  <ciManagement>
+    <url>https://travis-ci.org/dbmdz/digitalcollections-core</url>
+    <system>Travis CI</system>
+  </ciManagement>
+  <issueManagement>
+    <url>https://github.com/dbmdz/digitalcollections-core/issues</url>
+    <system>GitHub Issues</system>
+  </issueManagement>
+  <scm>
+    <connection>https://github.com/dbmdz/digitalcollections-core.git</connection>
+    <developerConnection>git@github.com:dbmdz/digitalcollections-core.git</developerConnection>
+    <url>https://github.com/dbmdz/digitalcollections-core</url>
+  </scm>
+  
+  <profiles>
+    <profile>
+      <id>deploy</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <version>${version.maven-gpg-plugin}</version>
+            <executions>
+              <execution>
+                <id>sign-artifacts</id>
+                <phase>verify</phase>
+                <goals>
+                  <goal>sign</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
