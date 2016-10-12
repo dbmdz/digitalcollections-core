@@ -36,6 +36,7 @@
     
     <!-- Plugin versions -->
     <version.maven-compiler-plugin>3.1</version.maven-compiler-plugin>
+    <version.versions-maven-plugin>2.3</version.versions-maven-plugin>
   </properties>
   
   <build>
@@ -48,6 +49,11 @@
           <source>${maven.compiler.source}</source>
           <target>${maven.compiler.target}</target>
         </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>versions-maven-plugin</artifactId>
+        <version>${version.versions-maven-plugin}</version>
       </plugin>
     </plugins>
   </build>
