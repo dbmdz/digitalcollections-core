@@ -7,6 +7,7 @@ import de.digitalcollections.core.model.api.resource.Resource;
 import de.digitalcollections.core.model.api.resource.enums.ResourcePersistenceType;
 import de.digitalcollections.core.model.api.resource.exceptions.ResourceIOException;
 import de.digitalcollections.core.model.impl.resource.ResourceImpl;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -90,7 +91,11 @@ public class ResourceRepositoryImpl implements ResourceRepository<Resource> {
       long lastModified = springResource.lastModified();
       return lastModified;
     } catch (IOException ex) {
-      LOGGER.warn("Can not get lastModified for resource " + springResource.toString(), ex);
+      if ( ex instanceof FileNotFoundException ) {
+        LOGGER.warn("Resource " + springResource.toString()+" does not exist.");
+      } else {
+        LOGGER.warn("Can not get lastModified for resource " + springResource.toString(), ex);
+      }
     }
     return -1;
   }
