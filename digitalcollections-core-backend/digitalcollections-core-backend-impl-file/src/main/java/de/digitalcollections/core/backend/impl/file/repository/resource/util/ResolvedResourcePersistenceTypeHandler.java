@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 @Component
 public class ResolvedResourcePersistenceTypeHandler implements ResourcePersistenceTypeHandler {
@@ -24,10 +25,14 @@ public class ResolvedResourcePersistenceTypeHandler implements ResourcePersisten
   }
 
   @Override
-  public URI getUri(String key, String filenameExtension) throws ResourceIOException {
-    String resolvingKey = key + "." + filenameExtension;
+  public URI getUri(String resolvingKey, String filenameExtension) throws ResourceIOException {
     FileNameResolver fileNameResolver = getFileNameResolver(resolvingKey);
-    return fileNameResolver.getUri(resolvingKey);
+    final URI uri = fileNameResolver.getUri(resolvingKey);
+
+    if (!StringUtils.isEmpty(filenameExtension) && !uri.toString().endsWith(filenameExtension)) {
+      throw new ResourceIOException("Resolved URI " + uri.toString() + " targets a resource not of desired filenameExtension " + filenameExtension);
+    }
+    return uri;
   }
 
   public FileNameResolver getFileNameResolver(String key) throws ResourceIOException {
@@ -36,7 +41,7 @@ public class ResolvedResourcePersistenceTypeHandler implements ResourcePersisten
         return fileNameResolver;
       }
     }
-    LOGGER.warn("No matching pattern found " + key);
+    LOGGER.warn("No matching pattern found for key " + key);
     throw new ResourceIOException(key + " not resolvable!");
   }
 }

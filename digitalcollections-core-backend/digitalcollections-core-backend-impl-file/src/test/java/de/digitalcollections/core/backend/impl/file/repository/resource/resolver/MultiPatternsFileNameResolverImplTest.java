@@ -47,7 +47,7 @@ public class MultiPatternsFileNameResolverImplTest {
   @Test
   public void testGetURI() throws Exception {
     System.out.println("getURI");
-    String identifier = "bsb00001000.xml";
+    String identifier = "bsb00001000";
     String expResult = "http://rest.digitale-sammlungen.de/data/bsb00001000.xml";
     String result = fileNameResolver.getUri(identifier).toString();
     assertEquals(expResult, result);
@@ -59,7 +59,7 @@ public class MultiPatternsFileNameResolverImplTest {
   @Test
   public void testIsResolvable() {
     System.out.println("isResolvable");
-    String identifier = "bsb00001000.xml";
+    String identifier = "bsb00001000";
     Boolean expResult = true;
     Boolean result = fileNameResolver.isResolvable(identifier);
     assertEquals(expResult, result);

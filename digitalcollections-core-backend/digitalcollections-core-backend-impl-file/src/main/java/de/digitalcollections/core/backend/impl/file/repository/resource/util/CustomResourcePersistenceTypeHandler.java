@@ -1,9 +1,9 @@
 package de.digitalcollections.core.backend.impl.file.repository.resource.util;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import de.digitalcollections.core.model.api.resource.enums.ResourcePersistenceType;
 import de.digitalcollections.core.model.api.resource.exceptions.ResourceIOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -15,9 +15,9 @@ public class CustomResourcePersistenceTypeHandler implements ResourcePersistence
   }
 
   @Override
-  public URI getUri(String key, String filenameExtension) throws ResourceIOException {
+  public URI getUri(String resolvingKey, String filenameExtension) throws ResourceIOException {
     try {
-      return new URI(key);
+      return new URI(resolvingKey);
     } catch (URISyntaxException e) {
       throw new ResourceIOException(e);
     }

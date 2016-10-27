@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 /**
  * A binary repository using filesystem. see http://docs.oracle.com/javase/tutorial/essential/io/fileio.html see
@@ -42,6 +43,13 @@ public class ResourceRepositoryImpl implements ResourceRepository<Resource> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ResourceRepositoryImpl.class);
 
+  public static void createDirectories(Path path) throws IOException {
+    if (!Files.exists(path.getParent())) {
+      LOGGER.info("Creating directories: " + path.getParent());
+      Files.createDirectories(path.getParent());
+    }
+  }
+
   @Autowired
   private ApplicationContext applicationContext;
 
@@ -51,8 +59,11 @@ public class ResourceRepositoryImpl implements ResourceRepository<Resource> {
   @Override
   public Resource create(String key, ResourcePersistenceType resourcePersistenceType, String filenameExtension) throws ResourceIOException {
     Resource resource = new ResourceImpl();
-    resource.setFilenameExtension(filenameExtension);
-    resource.setMimeType(MimeTypes.getMimeType(filenameExtension));
+
+    if (!StringUtils.isEmpty(filenameExtension)) {
+      resource.setFilenameExtension(filenameExtension);
+      resource.setMimeType(MimeTypes.getMimeType(filenameExtension));
+    }
 
     URI uri = getUri(key, resourcePersistenceType, filenameExtension);
     resource.setUri(uri);
@@ -86,30 +97,6 @@ public class ResourceRepositoryImpl implements ResourceRepository<Resource> {
     return resource;
   }
 
-  private long getLastModified(org.springframework.core.io.Resource springResource) {
-    try {
-      long lastModified = springResource.lastModified();
-      return lastModified;
-    } catch (IOException ex) {
-      if ( ex instanceof FileNotFoundException ) {
-        LOGGER.warn("Resource " + springResource.toString()+" does not exist.");
-      } else {
-        LOGGER.warn("Can not get lastModified for resource " + springResource.toString(), ex);
-      }
-    }
-    return -1;
-  }
-
-  private long getSize(org.springframework.core.io.Resource springResource) {
-    try {
-      long length = springResource.contentLength();
-      return length;
-    } catch (IOException ex) {
-      LOGGER.warn("Can not get size for resource " + springResource.toString(), ex);
-    }
-    return -1;
-  }
-
   @Override
   public byte[] getBytes(Resource resource) throws ResourceIOException {
     try {
@@ -122,22 +109,40 @@ public class ResourceRepositoryImpl implements ResourceRepository<Resource> {
   }
 
   @Override
-  public InputStream getInputStream(Resource resource) throws ResourceIOException {
+  public InputStream getInputStream(URI resourceUri) throws ResourceIOException {
     try {
-      final URI uri = resource.getUri();
-      String location = uri.toString();
+      String location = resourceUri.toString();
       LOGGER.info("Getting inputstream for location '{}'.", location);
 
       if (location.startsWith("classpath:")) {
         return this.applicationContext.getResource(location).getInputStream();
       } else {
-        URL url = uri.toURL();
+        URL url = resourceUri.toURL();
         InputStream stream = url.openStream();
         return stream;
       }
     } catch (IOException e) {
       throw new ResourceIOException(e);
     }
+  }
+
+  @Override
+  public InputStream getInputStream(Resource resource) throws ResourceIOException {
+    return getInputStream(resource.getUri());
+  }
+
+  private long getLastModified(org.springframework.core.io.Resource springResource) {
+    try {
+      long lastModified = springResource.lastModified();
+      return lastModified;
+    } catch (IOException ex) {
+      if (ex instanceof FileNotFoundException) {
+        LOGGER.warn("Resource " + springResource.toString() + " does not exist.");
+      } else {
+        LOGGER.warn("Can not get lastModified for resource " + springResource.toString(), ex);
+      }
+    }
+    return -1;
   }
 
   @Override
@@ -164,6 +169,16 @@ public class ResourceRepositoryImpl implements ResourceRepository<Resource> {
       this.resourcePersistenceTypeHandlers = new LinkedList<>();
     }
     return resourcePersistenceTypeHandlers;
+  }
+
+  private long getSize(org.springframework.core.io.Resource springResource) {
+    try {
+      long length = springResource.contentLength();
+      return length;
+    } catch (IOException ex) {
+      LOGGER.warn("Can not get size for resource " + springResource.toString(), ex);
+    }
+    return -1;
   }
 
   private URI getUri(String key, ResourcePersistenceType resourcePersistenceType, String filenameExtension) throws ResourceIOException {
@@ -216,10 +231,4 @@ public class ResourceRepositoryImpl implements ResourceRepository<Resource> {
     }
   }
 
-  public static void createDirectories(Path path) throws IOException {
-    if (!Files.exists(path.getParent())) {
-      LOGGER.info("Creating directories: " + path.getParent());
-      Files.createDirectories(path.getParent());
-    }
-  }
 }

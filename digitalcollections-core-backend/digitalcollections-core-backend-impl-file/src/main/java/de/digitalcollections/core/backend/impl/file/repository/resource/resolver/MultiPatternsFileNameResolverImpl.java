@@ -1,5 +1,6 @@
 package de.digitalcollections.core.backend.impl.file.repository.resource.resolver;
 
+import de.digitalcollections.core.model.api.resource.exceptions.ResourceIOException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -9,7 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import de.digitalcollections.core.model.api.resource.exceptions.ResourceIOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -43,10 +43,11 @@ public class MultiPatternsFileNameResolverImpl implements FileNameResolver, Init
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    if (StringUtils.isEmpty(patternFileClasspath)) {
+    String filepath = getPatternFileClasspath();
+    if (StringUtils.isEmpty(filepath)) {
       return;
     }
-    Resource patRes = new ClassPathResource(patternFileClasspath);
+    Resource patRes = new ClassPathResource(filepath);
     if (patRes.exists()) {
       Properties props = new Properties();
       try {
@@ -67,6 +68,10 @@ public class MultiPatternsFileNameResolverImpl implements FileNameResolver, Init
   @Override
   public Path getPath(String fileName) throws ResourceIOException {
     return Paths.get(this.getUri(fileName));
+  }
+
+  public String getPatternFileClasspath() {
+    return patternFileClasspath;
   }
 
   public void setPatternFileClasspath(String patternFileClasspath) throws Exception {
@@ -90,6 +95,7 @@ public class MultiPatternsFileNameResolverImpl implements FileNameResolver, Init
     URI uri;
     try {
       String resolvedPath = getString(identifier);
+      resolvedPath = replaceCustomPlaceholders(resolvedPath);
       uri = new URI(resolvedPath);
       if (!uri.isAbsolute()) {
         uri = new URI("file:" + resolvedPath);
@@ -109,5 +115,15 @@ public class MultiPatternsFileNameResolverImpl implements FileNameResolver, Init
       }
     }
     return Boolean.FALSE;
+  }
+
+  /**
+   * After replacing regex vars you can use this hook method to replace further custom placeholders.
+   *
+   * @param resolvedPath path String still containing custom placeholders
+   * @return resolvedPath with all placeholders replaced
+   */
+  protected String replaceCustomPlaceholders(String resolvedPath) throws ResourceIOException {
+    return resolvedPath;
   }
 }
