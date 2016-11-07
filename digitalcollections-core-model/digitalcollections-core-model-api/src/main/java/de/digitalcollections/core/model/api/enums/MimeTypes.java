@@ -10,7 +10,7 @@ package de.digitalcollections.core.model.api.enums;
 
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.activation.MimeType;
 import javax.activation.MimeTypeParseException;
@@ -139,10 +139,12 @@ public class MimeTypes {
   public static final String MIME_VIDEO_X_SGI_MOVIE = "video/x-sgi-movie";
   public static final String MIME_X_CONFERENCE_X_COOLTALK = "x-conference/x-cooltalk";
 
-  private static final HashMap<String, String> MIMETYPE_MAPPING;
+  private static final LinkedHashMap<String, String> MIMETYPE_MAPPING;
 
   static {
-    MIMETYPE_MAPPING = new HashMap<String, String>(200) {
+    // using linked hashmap to pertain order in which content is added.
+    // Order of below "puts" is important! When calling getExtension, first entry is returned!
+    MIMETYPE_MAPPING = new LinkedHashMap<String, String>(200) {
 
       private static final long serialVersionUID = 1L;
 
@@ -219,9 +221,11 @@ public class MimeTypes {
         put1("jar", MIME_APPLICATION_JAVA_ARCHIVE);
         put1("java", MIME_TEXT_X_JAVA);
         put1("jnlp", MIME_APPLICATION_JNLP);
+
         put1("jpg", MIME_IMAGE_JPEG);
-        // put1("jpe", MIME_IMAGE_JPEG);
         put1("jpeg", MIME_IMAGE_JPEG);
+        put1("jpe", MIME_IMAGE_JPEG);
+
         put1("js", MIME_APPLICATION_X_JAVASCRIPT);
         put1("json", MIME_APPLICATION_JSON);
         put1("kar", MIME_AUDIO_MIDI);
@@ -301,8 +305,10 @@ public class MimeTypes {
         put1("texi", MIME_APPLICATION_X_TEXINFO);
         put1("texinfo", MIME_APPLICATION_X_TEXINFO);
         put1("tgz", MIME_APPLICATION_TGZ);
+
         put1("tif", MIME_IMAGE_TIFF);
         put1("tiff", MIME_IMAGE_TIFF);
+
         put1("tr", MIME_APPLICATION_X_TROFF);
         put1("tsv", MIME_TEXT_TAB_SEPARATED_VALUES);
         put1("txt", MIME_TEXT_PLAIN);
