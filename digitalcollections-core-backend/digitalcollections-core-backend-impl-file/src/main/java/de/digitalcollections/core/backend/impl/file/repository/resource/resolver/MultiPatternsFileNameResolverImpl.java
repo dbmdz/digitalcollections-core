@@ -1,7 +1,5 @@
 package de.digitalcollections.core.backend.impl.file.repository.resource.resolver;
 
-import static jdk.nashorn.internal.codegen.OptimisticTypesPersistence.load;
-
 import de.digitalcollections.core.model.api.resource.exceptions.ResourceIOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,7 +16,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import org.yaml.snakeyaml.TypeDescription;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 
