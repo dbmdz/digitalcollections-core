@@ -5,6 +5,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import de.digitalcollections.core.model.api.MimeType;
 import de.digitalcollections.core.model.api.resource.enums.ResourcePersistenceType;
 import de.digitalcollections.core.model.api.resource.exceptions.ResourceIOException;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,37 +32,22 @@ public class ManagedResourcePersistenceTypeHandler implements ResourcePersistenc
    * minimum ":"-separators is one, because of namespace in id is required
    *
    * @param key the resource key (manged resource key is an uuid)
-   * @param filenameExtension the filename extension of the resource (e.g. "xml")
-   * @return
+   * @param mimeType the MIME type of the resource (e.g. "application/xml")
+   * @return All URIs that could be resolved from the parameters
    * @throws de.digitalcollections.core.model.api.resource.exceptions.ResourceIOException
    */
   // key = c30cf362-5992-4f5a-8de0-61938134e721, mimetype = image/jpeg
   // /local/repository/bsb/c30c/f362/5992/4f5a/8de0/6193/8134/e721/c30cf362-5992-4f5a-8de0-61938134e721.jpg
   @Override
-  public URI getUri(String key, String filenameExtension) throws ResourceIOException {
+  public List<URI> getUris(String key, MimeType mimeType) throws ResourceIOException {
     String uuidPath = getSplittedUuidPath(key);
     Path path = Paths.get(this.getRepositoryFolderPath(), this.getNamespace(), uuidPath, key);
     String location = path.toString();
-    location = location + "." + filenameExtension;
+    location = location + "." + mimeType.getExtensions().get(0);
     try {
-      return new URI(location);
-
-//    DirectoryStream.Filter<Path> filter = new DirectoryStream.Filter<Path>() {
-//      @Override
-//      public boolean accept(Path file) throws IOException {
-//        return Files.isDirectory(file) && file.getFileName().startsWith(uuid + ".");
-//      }
-//    };
-//    try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(path, filter)) {
-//      for (Path file : directoryStream) {
-//        return file.toUri();
-//      }
-//    } catch (IOException ex) {
-//      throw new ResourceIOException("Error getting URI for managed resource " + uuid);
-//    }
-//    throw new ResourceIOException("No managed resource ffound for key " + uuid);
+      return Collections.singletonList(new URI(location));
     } catch (URISyntaxException ex) {
-      throw new ResourceIOException("Can't get URI for resource with key " + key + " and filename extension " + filenameExtension);
+      return new ArrayList<>();
     }
   }
 

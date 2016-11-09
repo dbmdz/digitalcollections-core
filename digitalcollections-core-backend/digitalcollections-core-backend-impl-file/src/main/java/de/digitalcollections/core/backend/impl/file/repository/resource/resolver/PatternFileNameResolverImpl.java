@@ -1,11 +1,13 @@
 package de.digitalcollections.core.backend.impl.file.repository.resource.resolver;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import de.digitalcollections.core.model.api.resource.exceptions.ResourceIOException;
+import java.util.stream.Collectors;
+
+import de.digitalcollections.commons.yaml.StringRepresentations;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,51 +15,57 @@ public class PatternFileNameResolverImpl implements FileNameResolver {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(PatternFileNameResolverImpl.class);
 
-  private final Pattern pattern;
+  private Pattern compiledPattern;
 
-  private final String regex;
+  private String pattern;
 
-  private final String replacement;
+  private List<String> substitutions;
+
+  public PatternFileNameResolverImpl() {
+  }
 
   public PatternFileNameResolverImpl(String regex, String replacement) {
-    this.regex = regex;
-    this.pattern = Pattern.compile(regex);
-    this.replacement = replacement;
+    this.pattern = regex;
+    this.compiledPattern = Pattern.compile(regex);
+    this.substitutions = Collections.singletonList(replacement);
+  }
+
+  public String getPattern() {
+    return pattern;
+  }
+
+  public List<String> getSubstitutions() {
+    return substitutions;
+  }
+
+  public void setPattern(String pattern) {
+    this.pattern = pattern;
+    this.compiledPattern = Pattern.compile(pattern);
+  }
+
+  public void setSubstitutions(List<String> substitutions) {
+    this.substitutions = substitutions;
   }
 
   @Override
-  public Path getPath(String fileName) throws ResourceIOException {
-    return Paths.get(this.getUri(fileName));
+  public List<String> getStrings(String identifier) {
+    Matcher matcher = this.compiledPattern.matcher(identifier);
+    return this.substitutions.stream()
+        .map(matcher::replaceAll)
+        .collect(Collectors.toList());
   }
 
   @Override
-  public String getString(String fileName) {
-    String result = this.pattern.matcher(fileName).replaceAll(this.replacement);
-    LOGGER.debug("Result " + result);
-    return result;
-  }
-
-  @Override
-  public URI getUri(String fileName) throws ResourceIOException {
-    try {
-      return new URI(this.getString(fileName));
-    } catch (URISyntaxException e) {
-      throw new ResourceIOException(e);
-    }
-  }
-
-  @Override
-  public Boolean isResolvable(String fileName) {
-    Boolean b = this.pattern.matcher(fileName).matches();
-    LOGGER.debug("Matching " + fileName + " against " + this.regex + " is " + b);
+  public Boolean isResolvable(String identifier) {
+    Boolean b = this.compiledPattern.matcher(identifier).matches();
+    LOGGER.debug("Matching " + identifier + " against " + this.pattern + " is " + b);
     return b;
   }
 
+  /*
   @Override
   public String toString() {
-    return "PatternFileNameResolverImpl\n{"
-            + "\nregex    = '" + regex + '\''
-            + "\nreplacement = '" + replacement + '\''
-            + "\n}";
+    return StringRepresentations.stringRepresentationOf(this);
   }
+  */
 }

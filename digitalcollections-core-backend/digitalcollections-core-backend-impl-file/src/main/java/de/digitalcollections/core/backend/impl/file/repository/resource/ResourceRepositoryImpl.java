@@ -1,8 +1,10 @@
 package de.digitalcollections.core.backend.impl.file.repository.resource;
 
+import static java.nio.file.Files.createDirectories;
+
 import de.digitalcollections.core.backend.api.resource.ResourceRepository;
 import de.digitalcollections.core.backend.impl.file.repository.resource.util.ResourcePersistenceTypeHandler;
-import de.digitalcollections.core.model.api.enums.MimeTypes;
+import de.digitalcollections.core.model.api.MimeType;
 import de.digitalcollections.core.model.api.resource.Resource;
 import de.digitalcollections.core.model.api.resource.enums.ResourcePersistenceType;
 import de.digitalcollections.core.model.api.resource.exceptions.ResourceIOException;
@@ -29,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -43,35 +46,32 @@ public class ResourceRepositoryImpl implements ResourceRepository<Resource> {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(ResourceRepositoryImpl.class);
 
-  public static void createDirectories(Path path) throws IOException {
-    if (!Files.exists(path.getParent())) {
-      LOGGER.info("Creating directories: " + path.getParent());
-      Files.createDirectories(path.getParent());
-    }
-  }
-
-  @Autowired
-  private ApplicationContext applicationContext;
-
   @Autowired
   private List<ResourcePersistenceTypeHandler> resourcePersistenceTypeHandlers;
 
+  @Autowired
+  ResourceLoader resourceLoader;
+
   @Override
-  public Resource create(String key, ResourcePersistenceType resourcePersistenceType, String filenameExtension) throws ResourceIOException {
+  public Resource create(String key, ResourcePersistenceType resourcePersistenceType, MimeType mimeType) throws ResourceIOException {
+    Resource resource = getResource(key, resourcePersistenceType, mimeType);
+    List<URI> uris = getUris(key, resourcePersistenceType, mimeType);
+    resource.setUri(uris.get(0));
+    return resource;
+  }
+
+  private Resource getResource(String key, ResourcePersistenceType persistenceType, MimeType mimeType) {
     Resource resource = new ResourceImpl();
-
-    if (!StringUtils.isEmpty(filenameExtension)) {
-      resource.setFilenameExtension(filenameExtension);
-      resource.setMimeType(MimeTypes.getMimeType(filenameExtension));
+    if (mimeType != null) {
+      if (!mimeType.getExtensions().isEmpty()) {
+        resource.setFilenameExtension(mimeType.getExtensions().get(0));
+      }
+      resource.setMimeType(mimeType);
     }
-
-    URI uri = getUri(key, resourcePersistenceType, filenameExtension);
-    resource.setUri(uri);
-
-    if (ResourcePersistenceType.REFERENCED.equals(resourcePersistenceType)) {
+    if (ResourcePersistenceType.REFERENCED.equals(persistenceType)) {
       resource.setReadonly(true);
     }
-    if (ResourcePersistenceType.MANAGED.equals(resourcePersistenceType)) {
+    if (ResourcePersistenceType.MANAGED.equals(persistenceType)) {
       resource.setUuid(UUID.fromString(key));
     }
     return resource;
@@ -83,10 +83,16 @@ public class ResourceRepositoryImpl implements ResourceRepository<Resource> {
   }
 
   @Override
-  public Resource find(String key, ResourcePersistenceType resourcePersistenceType, String filenameExtension) throws ResourceIOException {
-    Resource resource = create(key, resourcePersistenceType, filenameExtension);
-
-    org.springframework.core.io.Resource springResource = applicationContext.getResource(resource.getUri().toString());
+  public Resource find(String key, ResourcePersistenceType resourcePersistenceType, MimeType mimeType) throws ResourceIOException {
+    Resource resource = getResource(key, resourcePersistenceType, mimeType);
+    URI uri = getUris(key, resourcePersistenceType, mimeType).stream()
+        .filter(u -> resourceLoader.getResource(u.toString()).isReadable())
+        .findFirst()
+        .orElseThrow(() -> new ResourceIOException(
+                "Could not resolve key " + key + " with MIME type " + mimeType.getTypeName()
+                + " to a readable Resource."));
+    resource.setUri(uri);
+    org.springframework.core.io.Resource springResource = resourceLoader.getResource(uri.toString());
 
     long lastModified = getLastModified(springResource);
     resource.setLastModified(lastModified);
@@ -113,14 +119,7 @@ public class ResourceRepositoryImpl implements ResourceRepository<Resource> {
     try {
       String location = resourceUri.toString();
       LOGGER.info("Getting inputstream for location '{}'.", location);
-
-      if (location.startsWith("classpath:")) {
-        return this.applicationContext.getResource(location).getInputStream();
-      } else {
-        URL url = resourceUri.toURL();
-        InputStream stream = url.openStream();
-        return stream;
-      }
+      return resourceLoader.getResource(location).getInputStream();
     } catch (IOException e) {
       throw new ResourceIOException(e);
     }
@@ -133,14 +132,11 @@ public class ResourceRepositoryImpl implements ResourceRepository<Resource> {
 
   private long getLastModified(org.springframework.core.io.Resource springResource) {
     try {
-      long lastModified = springResource.lastModified();
-      return lastModified;
+      return springResource.lastModified();
+    } catch (FileNotFoundException e) {
+      LOGGER.warn("Resource " + springResource.toString() + " does not exist.");
     } catch (IOException ex) {
-      if (ex instanceof FileNotFoundException) {
-        LOGGER.warn("Resource " + springResource.toString() + " does not exist.");
-      } else {
-        LOGGER.warn("Can not get lastModified for resource " + springResource.toString(), ex);
-      }
+      LOGGER.warn("Can not get lastModified for resource " + springResource.toString(), ex);
     }
     return -1;
   }
@@ -181,17 +177,9 @@ public class ResourceRepositoryImpl implements ResourceRepository<Resource> {
     return -1;
   }
 
-  private URI getUri(String key, ResourcePersistenceType resourcePersistenceType, String filenameExtension) throws ResourceIOException {
-    try {
-      ResourcePersistenceTypeHandler resourcePersistenceTypeHandler = this.
-              getResourcePersistenceTypeHandler(resourcePersistenceType);
-      URI uri = resourcePersistenceTypeHandler.getUri(key, filenameExtension);
-      return uri;
-    } catch (IOException e) {
-      String msg = "Could not create URI for key " + key + " (" + resourcePersistenceType + ")";
-      LOGGER.error(msg, e);
-      throw new ResourceIOException(msg, e);
-    }
+  private List<URI> getUris(String key, ResourcePersistenceType persistenceType, MimeType mimeType) throws ResourceIOException {
+    ResourcePersistenceTypeHandler handler = getResourcePersistenceTypeHandler(persistenceType);
+    return handler.getUris(key, mimeType);
   }
 
   @Override
@@ -210,7 +198,7 @@ public class ResourceRepositoryImpl implements ResourceRepository<Resource> {
         throw new ResourceIOException("Scheme not supported for write-operations: " + uri.getScheme() + " (" + uri + ")");
       }
 
-      createDirectories(Paths.get(uri));
+      Files.createDirectories(Paths.get(uri));
       LOGGER.info("Writing: " + uri);
       IOUtils.copy(payload, new FileOutputStream(Paths.get(uri).toFile()));
     } catch (IOException e) {

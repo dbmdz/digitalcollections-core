@@ -27,6 +27,8 @@
     <version.junit>4.12</version.junit>
     <version.slf4j-api>1.7.21</version.slf4j-api>
     <version.spring>4.3.3.RELEASE</version.spring>
+    <version.snakeyaml>1.17</version.snakeyaml>
+    <version.dc-commons>1.0.0</version.dc-commons>
     
     <!-- Build properties -->
     <maven.compiler.source>1.8</maven.compiler.source>
@@ -172,6 +174,16 @@
         <groupId>org.springframework</groupId>
         <artifactId>spring-core</artifactId>
         <version>${version.spring}</version>
+      </dependency>
+      <dependency>
+        <groupId>de.digitalcollections.commons</groupId>
+        <artifactId>digitalcollections-commons-yaml</artifactId>
+        <version>${version.dc-commons}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.yaml</groupId>
+        <artifactId>snakeyaml</artifactId>
+        <version>${version.snakeyaml}</version>
       </dependency>
       <dependency>
         <groupId>org.springframework</groupId>

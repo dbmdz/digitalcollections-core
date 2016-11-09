@@ -3,7 +3,8 @@ package de.digitalcollections.core.model.impl.resource;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.util.UUID;
-import javax.activation.MimeType;
+
+import de.digitalcollections.core.model.api.MimeType;
 import de.digitalcollections.core.model.api.resource.Resource;
 
 public class ResourceImpl implements Resource {

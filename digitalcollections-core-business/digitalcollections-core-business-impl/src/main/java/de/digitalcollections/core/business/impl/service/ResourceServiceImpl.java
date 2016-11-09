@@ -2,6 +2,7 @@ package de.digitalcollections.core.business.impl.service;
 
 import de.digitalcollections.core.backend.api.resource.ResourceRepository;
 import de.digitalcollections.core.business.api.ResourceService;
+import de.digitalcollections.core.model.api.MimeType;
 import de.digitalcollections.core.model.api.resource.Resource;
 import de.digitalcollections.core.model.api.resource.enums.ResourcePersistenceType;
 import de.digitalcollections.core.model.api.resource.exceptions.ResourceIOException;
@@ -17,13 +18,13 @@ public class ResourceServiceImpl implements ResourceService {
   private ResourceRepository resourceRepository;
 
   @Override
-  public Resource create(String key, ResourcePersistenceType resourcePersistenceType, String filenameExtension) throws ResourceIOException {
-    return resourceRepository.create(key, resourcePersistenceType, filenameExtension);
+  public Resource create(String key, ResourcePersistenceType resourcePersistenceType, MimeType mimeType) throws ResourceIOException {
+    return resourceRepository.create(key, resourcePersistenceType, mimeType);
   }
 
   @Override
-  public Resource get(String key, ResourcePersistenceType resourcePersistenceType, String filenameExtension) throws ResourceIOException {
-    return resourceRepository.find(key, resourcePersistenceType, filenameExtension);
+  public Resource get(String key, ResourcePersistenceType resourcePersistenceType, MimeType mimeType) throws ResourceIOException {
+    return resourceRepository.find(key, resourcePersistenceType, mimeType);
   }
 
   @Override

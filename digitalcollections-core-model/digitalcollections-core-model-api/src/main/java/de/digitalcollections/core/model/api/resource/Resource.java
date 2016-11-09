@@ -2,7 +2,8 @@ package de.digitalcollections.core.model.api.resource;
 
 import java.net.URI;
 import java.util.UUID;
-import javax.activation.MimeType;
+
+import de.digitalcollections.core.model.api.MimeType;
 
 /**
  * Eine Resource (Quelle) beschreibt eine beliebige Datei, unabhaengig von deren physikalischen Speicherort, verwendete

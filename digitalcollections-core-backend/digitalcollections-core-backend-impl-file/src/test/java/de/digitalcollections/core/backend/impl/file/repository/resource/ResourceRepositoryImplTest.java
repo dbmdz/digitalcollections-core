@@ -1,7 +1,11 @@
 package de.digitalcollections.core.backend.impl.file.repository.resource;
 
+import static de.digitalcollections.core.model.api.resource.enums.ResourcePersistenceType.RESOLVED;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import de.digitalcollections.core.backend.api.resource.ResourceRepository;
 import de.digitalcollections.core.config.SpringConfigBackendFile;
+import de.digitalcollections.core.model.api.MimeType;
 import de.digitalcollections.core.model.api.resource.Resource;
 import de.digitalcollections.core.model.api.resource.enums.ResourcePersistenceType;
 import java.net.URI;
@@ -64,7 +68,7 @@ public class ResourceRepositoryImplTest {
 
     // test resolved
     key = "bsb00001000";
-    resourcePersistenceType = ResourcePersistenceType.RESOLVED;
+    resourcePersistenceType = RESOLVED;
     resource = resourceRepository.create(key, resourcePersistenceType, "xml");
     expResult = new URI("http://rest.digitale-sammlungen.de/data/bsb00001000.xml");
     result = resource.getUri();
@@ -88,8 +92,8 @@ public class ResourceRepositoryImplTest {
   public void testFind() throws Exception {
     System.out.println("find");
     String key = "snafu";
-    ResourcePersistenceType resourcePersistenceType = ResourcePersistenceType.RESOLVED;
-    Resource resource = resourceRepository.find(key, resourcePersistenceType, "xml");
+    ResourcePersistenceType resourcePersistenceType = RESOLVED;
+    Resource resource = resourceRepository.find(key, resourcePersistenceType, MimeType.MIME_APPLICATION_XML);
 
     URI expResult = new URI("classpath:/snafu.xml");
     URI result = resource.getUri();
@@ -101,5 +105,11 @@ public class ResourceRepositoryImplTest {
 
     long lastModified = resource.getLastModified();
     Assert.assertTrue(lastModified > 0);
+  }
+
+  @Test
+  public void testFindMimeWildcard() throws Exception {
+    Resource res = resourceRepository.find("snafu", RESOLVED, MimeType.MIME_WILDCARD);
+    assertThat(res.getUri()).isEqualTo(new URI("classpath:/snafu.xml"));
   }
 }

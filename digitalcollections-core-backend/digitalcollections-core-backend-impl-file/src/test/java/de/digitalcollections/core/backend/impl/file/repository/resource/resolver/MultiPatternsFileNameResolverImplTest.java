@@ -1,7 +1,15 @@
 package de.digitalcollections.core.backend.impl.file.repository.resource.resolver;
 
+import static de.digitalcollections.core.model.api.MimeType.MIME_APPLICATION_JSON;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import de.digitalcollections.core.config.SpringConfigBackendFile;
-import static org.junit.Assert.assertEquals;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,9 +28,18 @@ public class MultiPatternsFileNameResolverImplTest {
   @Autowired
   private FileNameResolver fileNameResolver;
 
+  private URI xmlUri;
+  private URI jsonUri;
+
   @BeforeClass
   public static void setupClass() {
     System.setProperty("spring.profiles.active", "TEST");
+  }
+
+  @Before
+  public void setup() throws URISyntaxException {
+    xmlUri = new URI("http://rest.digitale-sammlungen.de/data/bsb00001000.xml");
+    jsonUri = new URI("http://iiif.digitale-sammlungen.de/presentation/v2/bsb00001000/manifest.json");
   }
 
   /**
@@ -31,12 +48,13 @@ public class MultiPatternsFileNameResolverImplTest {
    * @throws java.lang.Exception
    */
   @Test
-  public void testGetString() throws Exception {
+  public void testGetStrings() throws Exception {
     System.out.println("getString");
-    String fileName = "bsb00001000_manifest.json";
-    String expResult = "file:/bsbstruc/content/bsb_content0000/bsb00001000/iiif/1.0/bsb00001000_manifest.json";
-    String result = fileNameResolver.getString(fileName);
-    assertEquals(expResult, result);
+    String fileName = "bsb00001000_00001";
+    String expResult = "http://rest.digitale-sammlungen.de/data/bsb00001000_00001.jpg";
+    List<String> results = fileNameResolver.getStrings(fileName);
+    assertThat(results).hasSize(1);
+    assertThat(results.get(0)).isEqualTo(expResult);
   }
 
   /**
@@ -45,12 +63,19 @@ public class MultiPatternsFileNameResolverImplTest {
    * @throws java.lang.Exception
    */
   @Test
-  public void testGetURI() throws Exception {
-    System.out.println("getURI");
+  public void testGetURIWithoutMime() throws Exception {
     String identifier = "bsb00001000";
-    String expResult = "http://rest.digitale-sammlungen.de/data/bsb00001000.xml";
-    String result = fileNameResolver.getUri(identifier).toString();
-    assertEquals(expResult, result);
+    List<URI> results = fileNameResolver.getUris(identifier);
+    assertThat(results).hasSize(2);
+    assertThat(results).containsExactly(xmlUri, jsonUri);
+  }
+
+  @Test
+  public void testGetURIWithMime() throws Exception {
+    String identifier = "bsb00001000";
+    List<URI> jsonResults = fileNameResolver.getUris(identifier, MIME_APPLICATION_JSON);
+    assertThat(jsonResults).hasSize(1);
+    assertThat(jsonResults).containsExactly(jsonUri);
   }
 
   /**
@@ -60,9 +85,7 @@ public class MultiPatternsFileNameResolverImplTest {
   public void testIsResolvable() {
     System.out.println("isResolvable");
     String identifier = "bsb00001000";
-    Boolean expResult = true;
-    Boolean result = fileNameResolver.isResolvable(identifier);
-    assertEquals(expResult, result);
+    assertThat(fileNameResolver.isResolvable(identifier)).isTrue();
   }
 
   @Configuration
