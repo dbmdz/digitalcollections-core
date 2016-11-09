@@ -1,11 +1,9 @@
 package de.digitalcollections.core.backend.impl.file.repository.resource.resolver;
 
-import de.digitalcollections.core.model.api.resource.exceptions.ResourceIOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -18,6 +16,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
+
+import de.digitalcollections.core.model.api.resource.exceptions.ResourceIOException;
 
 @Component
 public class MultiPatternsFileNameResolverImpl implements FileNameResolver, InitializingBean {

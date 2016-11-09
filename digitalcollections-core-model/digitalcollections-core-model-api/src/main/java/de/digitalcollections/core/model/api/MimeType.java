@@ -1,13 +1,10 @@
 package de.digitalcollections.core.model.api;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.FileSystemNotFoundException;
-import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,6 +41,7 @@ public class MimeType {
       // types from the `mime.types` file
       knownTypes.get("image/jpeg").setExtensions(Arrays.asList("jpg", "jpeg", "jpe"));
       knownTypes.get("image/tiff").setExtensions(Arrays.asList("tif", "tiff"));
+      knownTypes.get("application/xml").getExtensions().add("ent");
   }
 
   /** Convenience definitions for commonly used MIME types */
