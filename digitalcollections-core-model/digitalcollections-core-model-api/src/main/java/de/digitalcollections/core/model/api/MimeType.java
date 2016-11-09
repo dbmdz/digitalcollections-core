@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.nio.file.FileSystemNotFoundException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -37,11 +38,14 @@ public class MimeType {
             Function.identity()));
 
     // Some custom overrides to influence the order of file extensions
-      // Since these are added to the end of the list, they take precedence over the
-      // types from the `mime.types` file
-      knownTypes.get("image/jpeg").setExtensions(Arrays.asList("jpg", "jpeg", "jpe"));
-      knownTypes.get("image/tiff").setExtensions(Arrays.asList("tif", "tiff"));
-      knownTypes.get("application/xml").getExtensions().add("ent");
+    // Since these are added to the end of the list, they take precedence over the
+    // types from the `mime.types` file
+    knownTypes.get("image/jpeg").setExtensions(Arrays.asList("jpg", "jpeg", "jpe"));
+    knownTypes.get("image/tiff").setExtensions(Arrays.asList("tif", "tiff"));
+
+    List<String> xmlExtensions = new ArrayList<>(knownTypes.get("application/xml").getExtensions());
+    xmlExtensions.add("ent");
+    knownTypes.get("application/xml").setExtensions(xmlExtensions);
   }
 
   /** Convenience definitions for commonly used MIME types */
