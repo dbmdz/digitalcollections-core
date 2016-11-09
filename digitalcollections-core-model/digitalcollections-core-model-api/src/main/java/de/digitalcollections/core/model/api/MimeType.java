@@ -14,6 +14,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
@@ -52,6 +54,9 @@ public class MimeType {
   public static final MimeType MIME_IMAGE_TIF = knownTypes.get("image/tif");
   public static final MimeType MIM_IMAGE_PNG = knownTypes.get("image/png");
 
+  private final Pattern mimePattern = Pattern.compile(
+      "^(?<primaryType>[a-z]+?)/(?<subType>[-\\\\.a-z0-9]+?)(?:\\+(?<suffix>\\w+))?$");
+
   private String typeName;
   private List<String> extensions;
 
@@ -85,6 +90,10 @@ public class MimeType {
     }
   }
 
+  public static MimeType fromTypename(String typeName) {
+    return knownTypes.get(typeName);
+  }
+
   private MimeType(String typeName) {
     this.typeName = typeName;
     this.extensions = Collections.emptyList();
@@ -106,8 +115,35 @@ public class MimeType {
     return extensions;
   }
 
-  public <T> void setExtensions(List<String> extensions) {
+  private void setExtensions(List<String> extensions) {
     this.extensions = extensions;
+  }
+
+  public String getPrimaryType() {
+    Matcher matcher = mimePattern.matcher(typeName);
+    if (matcher.matches()) {
+      return matcher.group("primaryType");
+    } else {
+      return null;
+    }
+  }
+
+  public String getSubType() {
+    Matcher matcher = mimePattern.matcher(typeName);
+    if (matcher.matches()) {
+      return matcher.group("subType");
+    } else {
+      return null;
+    }
+  }
+
+  public String getSuffix() {
+    Matcher matcher = mimePattern.matcher(typeName);
+    if (matcher.matches()) {
+      return matcher.group("suffix");
+    } else {
+      return null;
+    }
   }
 
   @Override

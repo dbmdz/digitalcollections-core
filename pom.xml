@@ -23,8 +23,8 @@
   <properties>
     <!-- Dependencies versions -->
     <version.commons-io>2.5</version.commons-io>
-    <version.hamcrest-core>1.3</version.hamcrest-core>
     <version.junit>4.12</version.junit>
+    <version.assertj>3.5.2</version.assertj>
     <version.slf4j-api>1.7.21</version.slf4j-api>
     <version.spring>4.3.3.RELEASE</version.spring>
     <version.snakeyaml>1.17</version.snakeyaml>
@@ -155,10 +155,9 @@
         <scope>test</scope>
       </dependency>
       <dependency>
-        <groupId>org.hamcrest</groupId>
-        <artifactId>hamcrest-core</artifactId>
-        <version>${version.hamcrest-core}</version>
-        <scope>test</scope>
+        <groupId>org.assertj</groupId>
+        <artifactId>assertj-core</artifactId>
+        <version>${version.assertj}</version>
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
