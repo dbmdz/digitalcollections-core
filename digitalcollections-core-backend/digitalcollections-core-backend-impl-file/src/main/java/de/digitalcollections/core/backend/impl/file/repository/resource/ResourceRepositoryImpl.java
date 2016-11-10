@@ -79,12 +79,16 @@ public class ResourceRepositoryImpl implements ResourceRepository<Resource> {
   @Override
   public Resource find(String key, ResourcePersistenceType resourcePersistenceType, MimeType mimeType) throws ResourceIOException {
     Resource resource = getResource(key, resourcePersistenceType, mimeType);
-    URI uri = getUris(key, resourcePersistenceType, mimeType).stream()
-            .filter(u -> resourceLoader.getResource(u.toString()).isReadable())
-            .findFirst()
-            .orElseThrow(() -> new ResourceIOException(
-                    "Could not resolve key " + key + " with MIME type " + mimeType.getTypeName()
-                    + " to a readable Resource."));
+    List<URI> candidates = getUris(key, resourcePersistenceType, mimeType);
+    if (candidates.isEmpty()) {
+      throw new ResourceIOException("Could not resolve key " + key + "with MIME type " + mimeType.getTypeName() + "to an URI");
+    }
+    URI uri = candidates.stream()
+        .filter(u -> resourceLoader.getResource(u.toString()).isReadable())
+        .findFirst()
+        .orElseThrow(() -> new ResourceIOException(
+                "Could not resolve key " + key + " with MIME type " + mimeType.getTypeName()
+                + " to a readable Resource. Attempted URIs were " + candidates));
     resource.setUri(uri);
     org.springframework.core.io.Resource springResource = resourceLoader.getResource(uri.toString());
 
@@ -203,8 +207,8 @@ public class ResourceRepositoryImpl implements ResourceRepository<Resource> {
   }
 
   @Override
-  public void write(Resource resource, String output) throws ResourceIOException {
-    try (InputStream in = new ReaderInputStream(new StringReader(output), Charset.forName("UTF-8"))) {
+  public void write(Resource resource, String input) throws ResourceIOException {
+    try (InputStream in = new ReaderInputStream(new StringReader(input), Charset.forName("UTF-8"))) {
       write(resource, in);
     } catch (IOException ex) {
       String msg = "Could not write data to uri " + String.valueOf(resource.getUri());
