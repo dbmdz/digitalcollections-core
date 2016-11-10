@@ -1,7 +1,7 @@
 package de.digitalcollections.core.model.api;
 
+import java.net.URI;
 import static org.assertj.core.api.Assertions.assertThat;
-
 import org.junit.Test;
 
 public class MimeTypeTest {
@@ -33,5 +33,11 @@ public class MimeTypeTest {
   @Test
   public void returnsNullForUnknownMimetype() throws Exception {
     assertThat(MimeType.fromTypename("foo/bar")).isNull();
+  }
+
+  @Test
+  public void testEquals() throws Exception {
+    MimeType mime = MimeType.fromURI(new URI("file:/bsbstruc/content/bsb_content0009/bsb00092995/xml/standard/2.2/bsb00092995_page.xml"));
+    assertThat(mime.equals(MimeType.MIME_APPLICATION_XML));
   }
 }
