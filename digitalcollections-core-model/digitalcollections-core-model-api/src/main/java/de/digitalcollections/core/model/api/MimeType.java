@@ -50,14 +50,15 @@ public class MimeType {
 
   /** Convenience definitions for commonly used MIME types */
   public static final MimeType MIME_WILDCARD = new MimeType("*", Collections.emptyList());
+  public static final MimeType MIME_IMAGE = new MimeType("image/*", Collections.emptyList());
   public static final MimeType MIME_APPLICATION_JSON = knownTypes.get("application/json");
   public static final MimeType MIME_APPLICATION_XML = knownTypes.get("application/xml");
   public static final MimeType MIME_IMAGE_JPEG = knownTypes.get("image/jpeg");
-  public static final MimeType MIME_IMAGE_TIF = knownTypes.get("image/tif");
-  public static final MimeType MIM_IMAGE_PNG = knownTypes.get("image/png");
+  public static final MimeType MIME_IMAGE_TIF = knownTypes.get("image/tiff");
+  public static final MimeType MIME_IMAGE_PNG = knownTypes.get("image/png");
 
   private final Pattern mimePattern = Pattern.compile(
-      "^(?<primaryType>[a-z]+?)/(?<subType>[-\\\\.a-z0-9]+?)(?:\\+(?<suffix>\\w+))?$");
+      "^(?<primaryType>[a-z]+?)/(?<subType>[-\\\\.a-z0-9*]+?)(?:\\+(?<suffix>\\w+))?$");
 
   private String typeName;
   private List<String> extensions;
@@ -148,11 +149,19 @@ public class MimeType {
     }
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (obj instanceof MimeType && ((MimeType) obj) == MIME_WILDCARD) {
-      return true;
+  public boolean matches(Object obj) {
+    if (obj instanceof MimeType) {
+      MimeType mime = (MimeType) obj;
+      if (mime == MIME_WILDCARD || this == MIME_WILDCARD) {
+        return true;
+      } else if (((mime.getSubType().equals("*") || this.getSubType().equals("*")))
+                  && this.getPrimaryType().equals(mime.getPrimaryType())) {
+        return true;
+      } else {
+        return super.equals(obj);
+      }
+    } else {
+      return false;
     }
-    return super.equals(obj);
   }
 }

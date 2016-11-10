@@ -38,6 +38,23 @@ public class MimeTypeTest {
   @Test
   public void testEquals() throws Exception {
     MimeType mime = MimeType.fromURI(new URI("file:/bsbstruc/content/bsb_content0009/bsb00092995/xml/standard/2.2/bsb00092995_page.xml"));
-    assertThat(mime.equals(MimeType.MIME_APPLICATION_XML));
+    assertThat(mime.matches(MimeType.MIME_APPLICATION_XML)).isTrue();
+  }
+
+  @Test
+  public void testTotalWildcard() throws Exception {
+    MimeType mime = MimeType.fromTypename("application/ecmascript");
+    assertThat(mime.matches(MimeType.MIME_WILDCARD));
+    assertThat(MimeType.MIME_WILDCARD.matches(mime)).isTrue();
+  }
+
+  @Test
+  public void testPartialWildcard() throws Exception {
+    assertThat(MimeType.MIME_IMAGE_PNG.matches(MimeType.MIME_IMAGE)).isTrue();
+    assertThat(MimeType.MIME_IMAGE.matches(MimeType.MIME_IMAGE_PNG)).isTrue();
+    assertThat(MimeType.MIME_IMAGE_TIF.matches(MimeType.MIME_IMAGE)).isTrue();
+    assertThat(MimeType.MIME_IMAGE.matches(MimeType.MIME_IMAGE_TIF)).isTrue();
+    assertThat(MimeType.MIME_APPLICATION_JSON.matches(MimeType.MIME_IMAGE)).isFalse();
+    assertThat(MimeType.MIME_IMAGE.matches(MimeType.MIME_APPLICATION_JSON)).isFalse();
   }
 }

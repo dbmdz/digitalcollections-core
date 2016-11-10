@@ -19,7 +19,7 @@ public interface FileNameResolver {
   /** Return resolved strings that match the given MIME type. **/
   default List<String> getStrings(String identifier, MimeType mimeType) throws ResourceIOException {
     return getStrings(identifier).stream()
-        .filter(s -> MimeType.fromFilename(s).equals(mimeType))
+        .filter(s -> MimeType.fromFilename(s).matches(mimeType))
         .collect(Collectors.toList());
   }
 
@@ -39,7 +39,7 @@ public interface FileNameResolver {
   /** Return resolved URIs that match the given MIME type. **/
   default List<URI> getUris(String identifier, MimeType mimeType) throws ResourceIOException {
     return getUris(identifier).stream()
-        .filter(u -> MimeType.fromURI(u).equals(mimeType))
+        .filter(u -> MimeType.fromURI(u).matches(mimeType))
         .collect(Collectors.toList());
   }
 
@@ -53,7 +53,7 @@ public interface FileNameResolver {
   /** Return resolved Paths that match the given MIME type. **/
   default List<Path> getPaths(String identifier, MimeType mimeType) throws ResourceIOException {
     return getPaths(identifier).stream()
-        .filter(p -> MimeType.fromFilename(p.toString()) == mimeType)
+        .filter(p -> MimeType.fromFilename(p.toString()).matches(mimeType))
         .collect(Collectors.toList());
   }
 }
