@@ -1,7 +1,5 @@
 package de.digitalcollections.core.backend.impl.file.repository.resource;
 
-import static java.nio.file.Files.createDirectories;
-
 import de.digitalcollections.core.backend.api.resource.ResourceRepository;
 import de.digitalcollections.core.backend.impl.file.repository.resource.util.ResourcePersistenceTypeHandler;
 import de.digitalcollections.core.model.api.MimeType;
@@ -17,10 +15,8 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.net.URI;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,11 +26,9 @@ import org.apache.commons.io.input.ReaderInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
-import org.springframework.util.StringUtils;
 
 /**
  * A binary repository using filesystem. see http://docs.oracle.com/javase/tutorial/essential/io/fileio.html see
@@ -86,11 +80,11 @@ public class ResourceRepositoryImpl implements ResourceRepository<Resource> {
   public Resource find(String key, ResourcePersistenceType resourcePersistenceType, MimeType mimeType) throws ResourceIOException {
     Resource resource = getResource(key, resourcePersistenceType, mimeType);
     URI uri = getUris(key, resourcePersistenceType, mimeType).stream()
-        .filter(u -> resourceLoader.getResource(u.toString()).isReadable())
-        .findFirst()
-        .orElseThrow(() -> new ResourceIOException(
-                "Could not resolve key " + key + " with MIME type " + mimeType.getTypeName()
-                + " to a readable Resource."));
+            .filter(u -> resourceLoader.getResource(u.toString()).isReadable())
+            .findFirst()
+            .orElseThrow(() -> new ResourceIOException(
+                    "Could not resolve key " + key + " with MIME type " + mimeType.getTypeName()
+                    + " to a readable Resource."));
     resource.setUri(uri);
     org.springframework.core.io.Resource springResource = resourceLoader.getResource(uri.toString());
 
@@ -198,7 +192,7 @@ public class ResourceRepositoryImpl implements ResourceRepository<Resource> {
         throw new ResourceIOException("Scheme not supported for write-operations: " + uri.getScheme() + " (" + uri + ")");
       }
 
-      Files.createDirectories(Paths.get(uri));
+      Files.createDirectories(Paths.get(uri).getParent());
       LOGGER.info("Writing: " + uri);
       IOUtils.copy(payload, new FileOutputStream(Paths.get(uri).toFile()));
     } catch (IOException e) {
