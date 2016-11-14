@@ -27,7 +27,7 @@ public class PatternFileNameResolverImpl implements FileNameResolver {
   public PatternFileNameResolverImpl(String regex, String replacement) {
     this.pattern = regex;
     this.compiledPattern = Pattern.compile(regex);
-    this.substitutions = Collections.singletonList(replacement);
+    this.substitutions = Collections.singletonList(replacement.replace("~", System.getenv("HOME")));
   }
 
   public String getPattern() {
@@ -44,7 +44,9 @@ public class PatternFileNameResolverImpl implements FileNameResolver {
   }
 
   public void setSubstitutions(List<String> substitutions) {
-    this.substitutions = substitutions;
+    this.substitutions = substitutions.stream()
+        .map(s -> s.replace("~", System.getenv("HOME")))
+        .collect(Collectors.toList());
   }
 
   @Override
