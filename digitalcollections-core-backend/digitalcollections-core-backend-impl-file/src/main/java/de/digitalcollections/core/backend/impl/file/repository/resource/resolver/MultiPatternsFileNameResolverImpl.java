@@ -1,11 +1,11 @@
 package de.digitalcollections.core.backend.impl.file.repository.resource.resolver;
 
+import de.digitalcollections.core.model.api.resource.exceptions.ResourceIOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -16,8 +16,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
-
-import de.digitalcollections.core.model.api.resource.exceptions.ResourceIOException;
 
 @Component
 public class MultiPatternsFileNameResolverImpl implements FileNameResolver, InitializingBean {
@@ -48,9 +46,11 @@ public class MultiPatternsFileNameResolverImpl implements FileNameResolver, Init
       return;
     }
     Resource patRes = new ClassPathResource(filepath);
-    Constructor constructor = new Constructor(PatternFileNameResolverImpl[].class);
-    Yaml yaml = new Yaml(constructor);
-    this.patternFileNameResolvers = Arrays.asList((PatternFileNameResolverImpl[]) yaml.load(patRes.getInputStream()));
+    if (patRes.exists() && patRes.isReadable()) {
+      Constructor constructor = new Constructor(PatternFileNameResolverImpl[].class);
+      Yaml yaml = new Yaml(constructor);
+      this.patternFileNameResolvers = Arrays.asList((PatternFileNameResolverImpl[]) yaml.load(patRes.getInputStream()));
+    }
   }
 
   public String getPatternFileClasspath() {
@@ -65,16 +65,16 @@ public class MultiPatternsFileNameResolverImpl implements FileNameResolver, Init
   @Override
   public List<String> getStrings(String identifier) throws ResourceIOException {
     return patternFileNameResolvers.stream()
-        .filter(r -> r.isResolvable(identifier))
-        .map(r -> r.getStrings(identifier))
-        .flatMap(Collection::stream)
-        .collect(Collectors.toList());
+            .filter(r -> r.isResolvable(identifier))
+            .map(r -> r.getStrings(identifier))
+            .flatMap(Collection::stream)
+            .collect(Collectors.toList());
   }
 
   @Override
   public Boolean isResolvable(String identifier) {
     return patternFileNameResolvers.stream()
-        .filter(r -> r.isResolvable(identifier))
-        .findFirst().isPresent();
+            .filter(r -> r.isResolvable(identifier))
+            .findFirst().isPresent();
   }
 }
