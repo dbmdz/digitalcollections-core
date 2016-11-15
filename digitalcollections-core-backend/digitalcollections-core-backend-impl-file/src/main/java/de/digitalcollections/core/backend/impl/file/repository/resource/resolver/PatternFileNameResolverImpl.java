@@ -6,8 +6,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import de.digitalcollections.commons.yaml.StringRepresentations;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +25,7 @@ public class PatternFileNameResolverImpl implements FileNameResolver {
   public PatternFileNameResolverImpl(String regex, String replacement) {
     this.pattern = regex;
     this.compiledPattern = Pattern.compile(regex);
-    this.substitutions = Collections.singletonList(replacement.replace("~", System.getenv("HOME")));
+    this.substitutions = Collections.singletonList(replacement.replace("~", System.getProperty("user.home")));
   }
 
   public String getPattern() {
@@ -45,16 +43,16 @@ public class PatternFileNameResolverImpl implements FileNameResolver {
 
   public void setSubstitutions(List<String> substitutions) {
     this.substitutions = substitutions.stream()
-        .map(s -> s.replace("~", System.getenv("HOME")))
-        .collect(Collectors.toList());
+            .map(s -> s.replace("~", System.getProperty("user.home")))
+            .collect(Collectors.toList());
   }
 
   @Override
   public List<String> getStrings(String identifier) {
     Matcher matcher = this.compiledPattern.matcher(identifier);
     return this.substitutions.stream()
-        .map(matcher::replaceAll)
-        .collect(Collectors.toList());
+            .map(matcher::replaceAll)
+            .collect(Collectors.toList());
   }
 
   @Override
@@ -69,5 +67,5 @@ public class PatternFileNameResolverImpl implements FileNameResolver {
   public String toString() {
     return StringRepresentations.stringRepresentationOf(this);
   }
-  */
+   */
 }
