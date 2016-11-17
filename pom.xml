@@ -5,30 +5,28 @@
   
   <groupId>de.digitalcollections</groupId>
   <artifactId>digitalcollections-core</artifactId>
-  <version>0-SNAPSHOT</version>
+  <version>1.2.4-SNAPSHOT</version>
   <packaging>pom</packaging>
-  
-  <name>DigitalCollections: Core</name>
-  <description>
-    Parent for all DigitalCollections Core projects/modules: Model, Frontend, Business, Backend.
-  </description>
-  <url>https://github.com/dbmdz/digitalcollections-core</url>
   
   <modules>
     <module>digitalcollections-core-model</module>
     <module>digitalcollections-core-backend</module>
     <module>digitalcollections-core-business</module>
   </modules>
+
+  <name>DigitalCollections: Core</name>
+  <description>Parent for all DigitalCollections Core projects/modules: Model, Frontend, Business, Backend.</description>
+  <url>https://github.com/dbmdz/digitalcollections-core</url>
   
   <properties>
     <!-- Dependencies versions -->
-    <version.commons-io>2.5</version.commons-io>
-    <version.junit>4.12</version.junit>
     <version.assertj>3.5.2</version.assertj>
-    <version.slf4j-api>1.7.21</version.slf4j-api>
-    <version.spring>4.3.3.RELEASE</version.spring>
-    <version.snakeyaml>1.17</version.snakeyaml>
+    <version.commons-io>2.5</version.commons-io>
     <version.dc-commons>1.0.0</version.dc-commons>
+    <version.junit>4.12</version.junit>
+    <version.slf4j-api>1.7.21</version.slf4j-api>
+    <version.snakeyaml>1.17</version.snakeyaml>
+    <version.spring>4.3.3.RELEASE</version.spring>
     
     <!-- Build properties -->
     <maven.compiler.source>1.8</maven.compiler.source>
@@ -120,6 +118,28 @@
       </plugin>
     </plugins>
   </build>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>ossrh-snapshots</id>
+      <name>Sonatype Nexus Snapshots</name>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+  </distributionManagement>
+  
+  <repositories>
+    <repository>
+      <id>ossrh-snapshots</id>
+      <name>Sonatype Nexus Snapshots</name>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </repository>
+  </repositories>
   
   <dependencyManagement>
     <dependencies>
