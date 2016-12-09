@@ -1,6 +1,7 @@
 package de.digitalcollections.core.backend.impl.file.repository.resource.resolver;
 
 import de.digitalcollections.core.model.api.resource.exceptions.ResourceIOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -9,9 +10,10 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.yaml.snakeyaml.Yaml;
@@ -23,7 +25,10 @@ public class MultiPatternsFileNameResolverImpl implements FileNameResolver, Init
   private static final Logger LOGGER = LoggerFactory.getLogger(MultiPatternsFileNameResolverImpl.class);
 
   @Value(value = "${multiPatternResolvingFile:}")
-  private String patternFileClasspath;
+  private String multiPatternResolvingFile;
+
+  @Autowired
+  ResourceLoader resourceLoader;
 
   private List<PatternFileNameResolverImpl> patternFileNameResolvers = new ArrayList<>();
 
@@ -41,11 +46,12 @@ public class MultiPatternsFileNameResolverImpl implements FileNameResolver, Init
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    String filepath = getPatternFileClasspath();
+    String filepath = getMultiPatternResolvingFile();
     if (StringUtils.isEmpty(filepath)) {
       return;
     }
-    Resource patRes = new ClassPathResource(filepath);
+    Resource patRes = getResource(filepath);
+
     if (patRes.exists() && patRes.isReadable()) {
       Constructor constructor = new Constructor(PatternFileNameResolverImpl[].class);
       Yaml yaml = new Yaml(constructor);
@@ -53,12 +59,19 @@ public class MultiPatternsFileNameResolverImpl implements FileNameResolver, Init
     }
   }
 
-  public String getPatternFileClasspath() {
-    return patternFileClasspath;
+  private Resource getResource(String uriPath) throws ResourceIOException {
+    URI resourceUri = URI.create(uriPath);
+    String location = resourceUri.toString();
+    LOGGER.info("Getting inputstream for location '{}'.", location);
+    return resourceLoader.getResource(location);
   }
 
-  public void setPatternFileClasspath(String patternFileClasspath) throws Exception {
-    this.patternFileClasspath = patternFileClasspath;
+  public String getMultiPatternResolvingFile() {
+    return multiPatternResolvingFile;
+  }
+
+  public void setMultiPatternResolvingFile(String multiPatternResolvingFile) throws Exception {
+    this.multiPatternResolvingFile = multiPatternResolvingFile;
     afterPropertiesSet();
   }
 

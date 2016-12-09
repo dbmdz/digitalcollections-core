@@ -6,12 +6,10 @@ import de.digitalcollections.core.model.api.resource.enums.ResourcePersistenceTy
 import de.digitalcollections.core.model.api.resource.exceptions.ResourceIOException;
 import java.net.URI;
 import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 @Component
 public class ResolvedResourcePersistenceTypeHandler implements ResourcePersistenceTypeHandler {
@@ -34,8 +32,8 @@ public class ResolvedResourcePersistenceTypeHandler implements ResourcePersisten
 
   private FileNameResolver getFileNameResolver(String key) throws ResourceIOException {
     return fileNameResolvers.stream()
-        .filter(r -> r.isResolvable(key))
-        .findFirst()
-        .orElseThrow(() -> new ResourceIOException(key + "not resolvable!"));
+            .filter(r -> r.isResolvable(key))
+            .findFirst()
+            .orElseThrow(() -> new ResourceIOException(key + " not resolvable!"));
   }
 }
