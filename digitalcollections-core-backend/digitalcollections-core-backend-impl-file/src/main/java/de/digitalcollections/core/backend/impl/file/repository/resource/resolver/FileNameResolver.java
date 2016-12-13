@@ -3,10 +3,8 @@ package de.digitalcollections.core.backend.impl.file.repository.resource.resolve
 import de.digitalcollections.core.model.api.MimeType;
 import de.digitalcollections.core.model.api.resource.exceptions.ResourceIOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,15 +38,8 @@ public interface FileNameResolver {
    * fails
    */
   default List<URI> getUris(String identifier) throws ResourceIOException {
-    List<URI> out = new ArrayList<>();
-    for (String s : getStrings(identifier)) {
-      try {
-        out.add(new URI(s));
-      } catch (URISyntaxException e) {
-        throw new ResourceIOException("Resolved String " + s + "is not a valid URI.");
-      }
-    }
-    return out;
+    return getStrings(identifier).stream()
+        .map(URI::create).collect(Collectors.toList());
   }
 
   /**

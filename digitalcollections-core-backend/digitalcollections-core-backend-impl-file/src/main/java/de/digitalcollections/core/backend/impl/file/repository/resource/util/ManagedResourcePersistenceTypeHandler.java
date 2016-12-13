@@ -1,17 +1,14 @@
 package de.digitalcollections.core.backend.impl.file.repository.resource.util;
 
-import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import de.digitalcollections.core.model.api.MimeType;
 import de.digitalcollections.core.model.api.resource.enums.ResourcePersistenceType;
 import de.digitalcollections.core.model.api.resource.exceptions.ResourceIOException;
+import java.io.File;
+import java.net.URI;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -44,11 +41,7 @@ public class ManagedResourcePersistenceTypeHandler implements ResourcePersistenc
     Path path = Paths.get(this.getRepositoryFolderPath(), this.getNamespace(), uuidPath, key);
     String location = path.toString();
     location = location + "." + mimeType.getExtensions().get(0);
-    try {
-      return Collections.singletonList(new URI(location));
-    } catch (URISyntaxException ex) {
-      return new ArrayList<>();
-    }
+    return Collections.singletonList(URI.create(location));
   }
 
   private String getNamespace() {

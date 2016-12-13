@@ -1,14 +1,10 @@
 package de.digitalcollections.core.backend.impl.file.repository.resource.resolver;
 
-import static de.digitalcollections.core.model.api.MimeType.MIME_APPLICATION_JSON;
-import static org.assertj.core.api.Assertions.assertThat;
-
 import de.digitalcollections.core.config.SpringConfigBackendFile;
-
+import static de.digitalcollections.core.model.api.MimeType.MIME_APPLICATION_JSON;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
-
+import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -37,9 +33,9 @@ public class MultiPatternsFileNameResolverImplTest {
   }
 
   @Before
-  public void setup() throws URISyntaxException {
-    xmlUri = new URI("http://rest.digitale-sammlungen.de/data/bsb00001000.xml");
-    jsonUri = new URI("http://iiif.digitale-sammlungen.de/presentation/v2/bsb00001000/manifest.json");
+  public void setup() {
+    xmlUri = URI.create("http://rest.digitale-sammlungen.de/data/bsb00001000.xml");
+    jsonUri = URI.create("http://iiif.digitale-sammlungen.de/presentation/v2/bsb00001000/manifest.json");
   }
 
   /**
