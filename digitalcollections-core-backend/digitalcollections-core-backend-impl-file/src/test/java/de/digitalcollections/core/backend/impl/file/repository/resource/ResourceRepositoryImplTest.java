@@ -62,7 +62,7 @@ public class ResourceRepositoryImplTest {
     String key = "a30cf362-5992-4f5a-8de0-61938134e721";
     ResourcePersistenceType resourcePersistenceType = ResourcePersistenceType.MANAGED;
     Resource resource = resourceRepository.create(key, resourcePersistenceType, "xml");
-    URI expResult = new URI("/src/test/resources/repository/de.digitalcollections.core.data.stream/a30c/f362/5992/4f5a/8de0/6193/8134/e721/a30cf362-5992-4f5a-8de0-61938134e721.xml");
+    URI expResult = URI.create("/src/test/resources/repository/de.digitalcollections.core.data.stream/a30c/f362/5992/4f5a/8de0/6193/8134/e721/a30cf362-5992-4f5a-8de0-61938134e721.xml");
     URI result = resource.getUri();
     Assert.assertEquals(expResult, result);
 
@@ -70,7 +70,7 @@ public class ResourceRepositoryImplTest {
     key = "bsb00001000";
     resourcePersistenceType = RESOLVED;
     resource = resourceRepository.create(key, resourcePersistenceType, "xml");
-    expResult = new URI("http://rest.digitale-sammlungen.de/data/bsb00001000.xml");
+    expResult = URI.create("http://rest.digitale-sammlungen.de/data/bsb00001000.xml");
     result = resource.getUri();
     Assert.assertEquals(expResult, result);
     Assert.assertFalse(resource.isReadonly());
@@ -79,7 +79,7 @@ public class ResourceRepositoryImplTest {
     key = "bsb00001000";
     resourcePersistenceType = ResourcePersistenceType.REFERENCED;
     resource = resourceRepository.create(key, resourcePersistenceType, "xml");
-    expResult = new URI("http://rest.digitale-sammlungen.de/data/bsb00001000.xml");
+    expResult = URI.create("http://rest.digitale-sammlungen.de/data/bsb00001000.xml");
     result = resource.getUri();
     Assert.assertEquals(expResult, result);
     Assert.assertTrue(resource.isReadonly());
@@ -95,7 +95,7 @@ public class ResourceRepositoryImplTest {
     ResourcePersistenceType resourcePersistenceType = RESOLVED;
     Resource resource = resourceRepository.find(key, resourcePersistenceType, MimeType.MIME_APPLICATION_XML);
 
-    URI expResult = new URI("classpath:/snafu.xml");
+    URI expResult = URI.create("classpath:/snafu.xml");
     URI result = resource.getUri();
     Assert.assertEquals(expResult, result);
 
@@ -110,6 +110,6 @@ public class ResourceRepositoryImplTest {
   @Test
   public void testFindMimeWildcard() throws Exception {
     Resource res = resourceRepository.find("snafu", RESOLVED, MimeType.MIME_WILDCARD);
-    assertThat(res.getUri()).isEqualTo(new URI("classpath:/snafu.xml"));
+    assertThat(res.getUri()).isEqualTo(URI.create("classpath:/snafu.xml"));
   }
 }

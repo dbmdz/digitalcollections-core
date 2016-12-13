@@ -37,7 +37,7 @@ public class MimeTypeTest {
 
   @Test
   public void testEquals() throws Exception {
-    MimeType mime = MimeType.fromURI(new URI("file:/bsbstruc/content/bsb_content0009/bsb00092995/xml/standard/2.2/bsb00092995_page.xml"));
+    MimeType mime = MimeType.fromURI(URI.create("file:/bsbstruc/content/bsb_content0009/bsb00092995/xml/standard/2.2/bsb00092995_page.xml"));
     assertThat(mime.matches(MimeType.MIME_APPLICATION_XML)).isTrue();
   }
 
