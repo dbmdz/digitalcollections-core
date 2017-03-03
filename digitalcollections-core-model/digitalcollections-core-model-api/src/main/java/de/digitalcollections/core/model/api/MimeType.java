@@ -89,7 +89,7 @@ public class MimeType {
       return fromFilename(Paths.get(uri).toString());
     } catch (FileSystemNotFoundException e) {
       // For non-file URIs, try to guess the MIME type from the URL path, if possible
-      return fromExtension(FilenameUtils.getExtension(uri.toString()));
+      return fromExtension(FilenameUtils.getExtension(uri.toString().toLowerCase()));
     }
   }
 
