@@ -57,4 +57,9 @@ public class MimeTypeTest {
     assertThat(MimeType.MIME_APPLICATION_JSON.matches(MimeType.MIME_IMAGE)).isFalse();
     assertThat(MimeType.MIME_IMAGE.matches(MimeType.MIME_APPLICATION_JSON)).isFalse();
   }
+
+  @Test
+  public void testHandlesUppercase() throws Exception {
+    assertThat(MimeType.fromFilename("INFO.TIF").matches(MimeType.MIME_IMAGE_TIF));
+  }
 }

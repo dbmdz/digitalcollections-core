@@ -67,9 +67,9 @@ public class MimeType {
   public static MimeType fromExtension(String ext) {
     final String extension;
     if (ext.startsWith(".")) {
-      extension = ext.substring(1);
+      extension = ext.substring(1).toLowerCase();
     } else {
-      extension = ext;
+      extension = ext.toLowerCase();
     }
     return knownTypes.values().stream()
         .filter(m -> m.getExtensions().contains(extension))
@@ -89,7 +89,7 @@ public class MimeType {
       return fromFilename(Paths.get(uri).toString());
     } catch (FileSystemNotFoundException e) {
       // For non-file URIs, try to guess the MIME type from the URL path, if possible
-      return fromExtension(FilenameUtils.getExtension(uri.toString().toLowerCase()));
+      return fromExtension(FilenameUtils.getExtension(uri.toString()));
     }
   }
 
