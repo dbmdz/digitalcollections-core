@@ -6,7 +6,7 @@
   <parent>
     <groupId>de.digitalcollections</groupId>
     <artifactId>digitalcollections-core-backend</artifactId>
-    <version>1.2.4-SNAPSHOT</version>
+    <version>1.2.5-SNAPSHOT</version>
   </parent>
   
   <artifactId>digitalcollections-core-backend-impl-file</artifactId>
@@ -18,6 +18,10 @@
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>de.digitalcollections.commons</groupId>
+      <artifactId>digitalcollections-commons-yaml</artifactId>
     </dependency>
     <dependency>
       <groupId>de.digitalcollections</groupId>
@@ -52,10 +56,6 @@
     <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>de.digitalcollections.commons</groupId>
-      <artifactId>digitalcollections-commons-yaml</artifactId>
     </dependency>
   </dependencies>
 </project>
