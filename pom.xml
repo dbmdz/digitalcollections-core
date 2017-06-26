@@ -5,7 +5,7 @@
   
   <groupId>de.digitalcollections</groupId>
   <artifactId>digitalcollections-core</artifactId>
-  <version>1.2.5</version>
+  <version>1.2.6-SNAPSHOT</version>
   <packaging>pom</packaging>
   
   <modules>
@@ -22,7 +22,7 @@
     <!-- Dependencies versions -->
     <version.assertj>3.5.2</version.assertj>
     <version.commons-io>2.5</version.commons-io>
-    <version.dc-commons>1.2.2</version.dc-commons>
+    <version.digitalcollections-commons>1.2.2</version.digitalcollections-commons>
     <version.junit>4.12</version.junit>
     <version.slf4j-api>1.7.22</version.slf4j-api>
     <version.snakeyaml>1.17</version.snakeyaml>
@@ -197,7 +197,7 @@
       <dependency>
         <groupId>de.digitalcollections.commons</groupId>
         <artifactId>digitalcollections-commons-yaml</artifactId>
-        <version>${version.dc-commons}</version>
+        <version>${version.digitalcollections-commons}</version>
       </dependency>
       <dependency>
         <groupId>org.yaml</groupId>
