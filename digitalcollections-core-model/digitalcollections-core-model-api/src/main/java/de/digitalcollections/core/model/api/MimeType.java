@@ -20,6 +20,7 @@ import org.apache.commons.io.FilenameUtils;
 
 public class MimeType {
   private static Map<String, MimeType> knownTypes;
+
   static {
     // Load list of known MIME types and their extensions from the IANA list in the
     // package resources
@@ -27,6 +28,7 @@ public class MimeType {
         .getClassLoader().getResourceAsStream("mime.types");
     BufferedReader mimeReader = new BufferedReader(new InputStreamReader(mimeStream));
     knownTypes = mimeReader.lines()
+        // Ignore commented-out lines
         .filter(l -> !l.startsWith("#"))
         // Normalize multiple tab-delimiters to a single one for easier parsing
         // and split into (type, extensions) pairs
@@ -57,10 +59,13 @@ public class MimeType {
   public static final MimeType MIME_IMAGE_TIF = knownTypes.get("image/tiff");
   public static final MimeType MIME_IMAGE_PNG = knownTypes.get("image/png");
 
+  /** Regular Expression used for decoding a MIME type **/
   private final Pattern mimePattern = Pattern.compile(
       "^(?<primaryType>[a-z]+?)/(?<subType>[-\\\\.a-z0-9*]+?)(?:\\+(?<suffix>\\w+))?$");
 
-  private String typeName;
+  private final String primaryType;
+  private final String subType;
+  private final String suffix;
   private List<String> extensions;
 
   /** Determine MIME type for the given file extension */
@@ -84,6 +89,7 @@ public class MimeType {
     return fromExtension(FilenameUtils.getExtension(filename));
   }
 
+  /** Determine MIME type from URI. **/
   public static MimeType fromURI(URI uri) {
     try {
       return fromFilename(Paths.get(uri).toString());
@@ -93,24 +99,37 @@ public class MimeType {
     }
   }
 
+  /** Given a nexisting MIME type name, look up the corresponding instance **/
   public static MimeType fromTypename(String typeName) {
     return knownTypes.get(typeName);
   }
 
+  // NOTE: Constructors are private, since we want users to rely on the pre-defined MIME types
   private MimeType(String typeName) {
-    this.typeName = typeName;
-    this.extensions = Collections.emptyList();
+    this(typeName, Collections.emptyList());
   }
 
   private MimeType(String typeName, List<String> extensions) {
-    this.typeName = typeName;
+    Matcher matcher = mimePattern.matcher(typeName);
+    if (!matcher.matches()) {
+      throw new IllegalArgumentException(String.format("%s is not a valid MIME type!", typeName));
+    }
+    this.primaryType = matcher.group("primaryType");
+    this.subType = matcher.group("subType");
+    this.suffix = matcher.group("suffix");
     this.extensions = extensions;
   }
 
 
   /** Get the MIME type's name (e.g. "application/json") */
   public String getTypeName() {
-    return typeName;
+    StringBuilder sb = new StringBuilder(primaryType)
+        .append("/")
+        .append(subType);
+    if (suffix != null) {
+      sb.append("+").append(suffix);
+    }
+    return sb.toString();
   }
 
   /** Get the known file extensions for the MIME type */
@@ -123,42 +142,32 @@ public class MimeType {
   }
 
   public String getPrimaryType() {
-    Matcher matcher = mimePattern.matcher(typeName);
-    if (matcher.matches()) {
-      return matcher.group("primaryType");
-    } else {
-      return null;
-    }
+    return primaryType;
   }
 
   public String getSubType() {
-    Matcher matcher = mimePattern.matcher(typeName);
-    if (matcher.matches()) {
-      return matcher.group("subType");
-    } else {
-      return null;
-    }
+    return subType;
   }
 
   public String getSuffix() {
-    Matcher matcher = mimePattern.matcher(typeName);
-    if (matcher.matches()) {
-      return matcher.group("suffix");
-    } else {
-      return null;
-    }
+    return suffix;
   }
 
-  public boolean matches(Object obj) {
-    if (obj instanceof MimeType) {
-      MimeType mime = (MimeType) obj;
+  /** Check if the MIME type "matches" another MIME type.
+   *
+   * @param other   Other MIME type to compare against
+   * @return Whether the other type matches this type
+   */
+  public boolean matches(Object other) {
+    if (other instanceof MimeType) {
+      MimeType mime = (MimeType) other;
       if (mime == MIME_WILDCARD || this == MIME_WILDCARD) {
         return true;
       } else if (((mime.getSubType().equals("*") || this.getSubType().equals("*")))
                   && this.getPrimaryType().equals(mime.getPrimaryType())) {
         return true;
       } else {
-        return super.equals(obj);
+        return super.equals(other);
       }
     } else {
       return false;
