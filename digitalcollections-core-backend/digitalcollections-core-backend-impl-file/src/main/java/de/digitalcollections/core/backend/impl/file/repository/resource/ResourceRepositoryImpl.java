@@ -57,7 +57,7 @@ public class ResourceRepositoryImpl implements ResourceRepository<Resource> {
   private Resource getResource(String key, ResourcePersistenceType persistenceType, MimeType mimeType) {
     Resource resource = new ResourceImpl();
     if (mimeType != null) {
-      if (!mimeType.getExtensions().isEmpty()) {
+      if (mimeType.getExtensions() != null && !mimeType.getExtensions().isEmpty()) {
         resource.setFilenameExtension(mimeType.getExtensions().get(0));
       }
       resource.setMimeType(mimeType);
@@ -84,11 +84,11 @@ public class ResourceRepositoryImpl implements ResourceRepository<Resource> {
       throw new ResourceIOException("Could not resolve key " + key + "with MIME type " + mimeType.getTypeName() + "to an URI");
     }
     URI uri = candidates.stream()
-        .filter(u -> resourceLoader.getResource(u.toString()).isReadable())
-        .findFirst()
-        .orElseThrow(() -> new ResourceIOException(
-                "Could not resolve key " + key + " with MIME type " + mimeType.getTypeName()
-                + " to a readable Resource. Attempted URIs were " + candidates));
+            .filter(u -> resourceLoader.getResource(u.toString()).isReadable())
+            .findFirst()
+            .orElseThrow(() -> new ResourceIOException(
+            "Could not resolve key " + key + " with MIME type " + mimeType.getTypeName()
+            + " to a readable Resource. Attempted URIs were " + candidates));
     resource.setUri(uri);
     org.springframework.core.io.Resource springResource = resourceLoader.getResource(uri.toString());
 
