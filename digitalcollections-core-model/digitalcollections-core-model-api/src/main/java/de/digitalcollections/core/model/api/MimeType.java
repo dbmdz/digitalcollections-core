@@ -23,7 +23,7 @@ public class MimeType {
 
   static {
     // Load list of known MIME types and their extensions from the IANA list in the
-    // package resources
+    // package resources (obtained from https://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types)
     InputStream mimeStream = MimeType.class
         .getClassLoader().getResourceAsStream("mime.types");
     BufferedReader mimeReader = new BufferedReader(new InputStreamReader(mimeStream));
@@ -61,7 +61,7 @@ public class MimeType {
 
   /** Regular Expression used for decoding a MIME type **/
   private final Pattern mimePattern = Pattern.compile(
-      "^(?<primaryType>[a-z]+?)/(?<subType>[-\\\\.a-z0-9*]+?)(?:\\+(?<suffix>\\w+))?$");
+      "^(?<primaryType>[-a-z]+?)/(?<subType>[-\\\\.a-z0-9*]+?)(?:\\+(?<suffix>\\w+))?$");
 
   private final String primaryType;
   private final String subType;
@@ -110,14 +110,20 @@ public class MimeType {
   }
 
   private MimeType(String typeName, List<String> extensions) {
-    Matcher matcher = mimePattern.matcher(typeName);
-    if (!matcher.matches()) {
-      throw new IllegalArgumentException(String.format("%s is not a valid MIME type!", typeName));
+    if (typeName.equals("*")) {
+      this.primaryType = "*";
+      this.subType = "*";
+      this.suffix = "";
+    } else {
+      Matcher matcher = mimePattern.matcher(typeName);
+      if (!matcher.matches()) {
+        throw new IllegalArgumentException(String.format("%s is not a valid MIME type!", typeName));
+      }
+      this.primaryType = matcher.group("primaryType");
+      this.subType = matcher.group("subType");
+      this.suffix = matcher.group("suffix");
+      this.extensions = extensions;
     }
-    this.primaryType = matcher.group("primaryType");
-    this.subType = matcher.group("subType");
-    this.suffix = matcher.group("suffix");
-    this.extensions = extensions;
   }
 
 
