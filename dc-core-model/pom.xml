@@ -10,10 +10,22 @@
   
   <name>DigitalCollections: Core (Model)</name>
   <artifactId>dc-core-model</artifactId>
-  <packaging>pom</packaging>
+  <packaging>jar</packaging>
   
-  <modules>
-    <module>dc-core-model-api</module>
-    <module>dc-core-model-impl</module>
-  </modules>
+  <dependencies>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.assertj</groupId>
+      <artifactId>assertj-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 </project>

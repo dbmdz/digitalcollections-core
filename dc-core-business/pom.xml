@@ -10,10 +10,20 @@
   
   <name>DigitalCollections: Core (Business)</name>
   <artifactId>dc-core-business</artifactId>
-  <packaging>pom</packaging>
+  <packaging>jar</packaging>
   
-  <modules>
-    <module>dc-core-business-api</module>
-    <module>dc-core-business-impl</module>
-  </modules>
+  <dependencies>
+    <dependency>
+      <groupId>de.digitalcollections.core</groupId>
+      <artifactId>dc-core-backend-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>de.digitalcollections.core</groupId>
+      <artifactId>dc-core-model</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+    </dependency>
+  </dependencies>
 </project>

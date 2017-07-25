@@ -17,7 +17,7 @@
   <dependencies>
     <dependency>
       <groupId>de.digitalcollections.core</groupId>
-      <artifactId>dc-core-model-api</artifactId>
+      <artifactId>dc-core-model</artifactId>
     </dependency>
   </dependencies>
 </project>

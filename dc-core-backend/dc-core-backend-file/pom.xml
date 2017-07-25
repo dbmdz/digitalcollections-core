@@ -29,11 +29,7 @@
     </dependency>
     <dependency>
       <groupId>de.digitalcollections.core</groupId>
-      <artifactId>dc-core-model-api</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>de.digitalcollections.core</groupId>
-      <artifactId>dc-core-model-impl</artifactId>
+      <artifactId>dc-core-model</artifactId>
     </dependency>
     <dependency>
       <groupId>org.yaml</groupId>

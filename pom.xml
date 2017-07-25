@@ -160,12 +160,12 @@
       </dependency>
       <dependency>
         <groupId>de.digitalcollections.core</groupId>
-        <artifactId>dc-core-business-api</artifactId>
+        <artifactId>dc-core-business</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
         <groupId>de.digitalcollections.core</groupId>
-        <artifactId>dc-core-model-api</artifactId>
+        <artifactId>dc-core-model</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
