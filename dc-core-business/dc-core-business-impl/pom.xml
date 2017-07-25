@@ -4,23 +4,23 @@
   <modelVersion>4.0.0</modelVersion>
   
   <parent>
-    <groupId>de.digitalcollections</groupId>
-    <artifactId>digitalcollections-core-business</artifactId>
-    <version>1.2.6-SNAPSHOT</version>
+    <groupId>de.digitalcollections.core</groupId>
+    <artifactId>dc-core-business</artifactId>
+    <version>2.0.0-SNAPSHOT</version>
   </parent>
   
-  <artifactId>digitalcollections-core-business-impl</artifactId>
   <name>DigitalCollections: Core (Business IMPL)</name>
+  <artifactId>dc-core-business-impl</artifactId>
   <packaging>jar</packaging>
   
   <dependencies>
     <dependency>
-      <groupId>de.digitalcollections</groupId>
-      <artifactId>digitalcollections-core-backend-api</artifactId>
+      <groupId>de.digitalcollections.core</groupId>
+      <artifactId>dc-core-backend-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>de.digitalcollections</groupId>
-      <artifactId>digitalcollections-core-business-api</artifactId>
+      <groupId>de.digitalcollections.core</groupId>
+      <artifactId>dc-core-business-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>

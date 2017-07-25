@@ -3,15 +3,15 @@
   
   <modelVersion>4.0.0</modelVersion>
   
-  <groupId>de.digitalcollections</groupId>
-  <artifactId>digitalcollections-core</artifactId>
-  <version>1.2.6-SNAPSHOT</version>
+  <groupId>de.digitalcollections.core</groupId>
+  <artifactId>dc-core</artifactId>
+  <version>2.0.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   
   <modules>
-    <module>digitalcollections-core-model</module>
-    <module>digitalcollections-core-backend</module>
-    <module>digitalcollections-core-business</module>
+    <module>dc-core-model</module>
+    <module>dc-core-business</module>
+    <module>dc-core-backend</module>
   </modules>
 
   <name>DigitalCollections: Core</name>
@@ -149,23 +149,28 @@
         <version>${version.commons-io}</version>
       </dependency>
       <dependency>
-        <groupId>de.digitalcollections</groupId>
-        <artifactId>digitalcollections-core-backend-api</artifactId>
+        <groupId>de.digitalcollections.commons</groupId>
+        <artifactId>digitalcollections-commons-yaml</artifactId>
+        <version>${version.digitalcollections-commons}</version>
+      </dependency>
+      <dependency>
+        <groupId>de.digitalcollections.core</groupId>
+        <artifactId>dc-core-backend-api</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>de.digitalcollections</groupId>
-        <artifactId>digitalcollections-core-business-api</artifactId>
+        <groupId>de.digitalcollections.core</groupId>
+        <artifactId>dc-core-business-api</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>de.digitalcollections</groupId>
-        <artifactId>digitalcollections-core-model-api</artifactId>
+        <groupId>de.digitalcollections.core</groupId>
+        <artifactId>dc-core-model-api</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
-        <groupId>de.digitalcollections</groupId>
-        <artifactId>digitalcollections-core-model-impl</artifactId>
+        <groupId>de.digitalcollections.core</groupId>
+        <artifactId>dc-core-model-impl</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -195,20 +200,15 @@
         <version>${version.spring}</version>
       </dependency>
       <dependency>
-        <groupId>de.digitalcollections.commons</groupId>
-        <artifactId>digitalcollections-commons-yaml</artifactId>
-        <version>${version.digitalcollections-commons}</version>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-test</artifactId>
+        <version>${version.spring}</version>
+        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.yaml</groupId>
         <artifactId>snakeyaml</artifactId>
         <version>${version.snakeyaml}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.springframework</groupId>
-        <artifactId>spring-test</artifactId>
-        <version>${version.spring}</version>
-        <scope>test</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
