@@ -60,6 +60,9 @@ public class MultiPatternsFileNameResolverImpl implements FileNameResolver, Init
   }
 
   private Resource getResource(String uriPath) throws ResourceIOException {
+    if (uriPath.startsWith("/")) {
+      uriPath = "file:" + uriPath;
+    }
     URI resourceUri = URI.create(uriPath);
     String location = resourceUri.toString();
     LOGGER.info("Getting inputstream for location '{}'.", location);
