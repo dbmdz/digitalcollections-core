@@ -12,9 +12,29 @@ import java.io.Serializable;
  */
 public class PageRequestImpl implements PageRequest, Serializable {
 
-  private final int page;
-  private final int size;
-  private final Sorting sort;
+  // TODO: just removed final for jackson deserializing... (see mixin)
+  private int page;
+  private int size;
+  private Sorting sort;
+
+  // TODO: just introduced for jackson deserializing... (see mixin)
+  public PageRequestImpl() {
+  }
+
+  // TODO: just introduced for jackson deserializing... (see mixin)
+  public void setPageNumber(int page) {
+    this.page = page;
+  }
+
+  // TODO: just introduced for jackson deserializing... (see mixin)
+  public void setPageSize(int size) {
+    this.size = size;
+  }
+
+  // TODO: just introduced for jackson deserializing... (see mixin)
+  public void setSorting(Sorting sort) {
+    this.sort = sort;
+  }
 
   /**
    * Creates a new {@link PageRequest}. Pages are zero indexed, thus providing 0 for {@code page} will return the first

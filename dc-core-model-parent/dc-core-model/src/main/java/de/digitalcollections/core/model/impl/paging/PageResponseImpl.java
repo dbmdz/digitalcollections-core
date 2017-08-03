@@ -10,9 +10,14 @@ import java.util.List;
 
 public class PageResponseImpl<T> implements PageResponse<T> {
 
-  private final List<T> content = new ArrayList<>();
-  private final PageRequest pageRequest;
-  private final long total;
+  private List<T> content = new ArrayList<>();
+  private PageRequest pageRequest;
+  private long total;
+
+  public PageResponseImpl() {
+    this.pageRequest = null;
+    this.total = 0;
+  }
 
   /**
    * Constructor of {@code PageResponseImpl} with the given content and the given governing {@link PageRequest}.
@@ -62,6 +67,10 @@ public class PageResponseImpl<T> implements PageResponse<T> {
     return Collections.unmodifiableList(content);
   }
 
+  public void setContent(List<T> content) {
+    this.content = content;
+  }
+
   @Override
   public int getNumber() {
     return pageRequest == null ? 0 : pageRequest.getPageNumber();
@@ -77,6 +86,10 @@ public class PageResponseImpl<T> implements PageResponse<T> {
     return pageRequest;
   }
 
+  public void setPageRequest(PageRequest pageRequest) {
+    this.pageRequest = pageRequest;
+  }
+
   @Override
   public int getSize() {
     return pageRequest == null ? 0 : pageRequest.getPageSize();
@@ -90,6 +103,10 @@ public class PageResponseImpl<T> implements PageResponse<T> {
   @Override
   public long getTotalElements() {
     return total;
+  }
+
+  public void setTotalElements(long totalElements) {
+    this.total = totalElements;
   }
 
   @Override
