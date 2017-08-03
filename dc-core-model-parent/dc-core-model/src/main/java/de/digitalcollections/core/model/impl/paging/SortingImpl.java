@@ -15,7 +15,18 @@ import java.util.List;
  */
 public class SortingImpl implements Sorting {
 
-  private final List<Order> orders;
+  private List<Order> orders;
+
+  public SortingImpl() {
+  }
+
+  public List<Order> getOrders() {
+    return orders;
+  }
+
+  public void setOrders(List<Order> orders) {
+    this.orders = orders;
+  }
 
   /**
    * Creates a new {@link Sorting} instance using the given {@link Order}s.

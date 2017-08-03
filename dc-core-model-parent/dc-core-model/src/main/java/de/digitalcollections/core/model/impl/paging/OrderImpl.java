@@ -16,10 +16,29 @@ public class OrderImpl implements Order {
 
   private static final boolean DEFAULT_IGNORE_CASE = false;
 
-  private final Direction direction;
-  private final boolean ignoreCase;
-  private final NullHandling nullHandling;
-  private final String property;
+  private Direction direction;
+  private boolean ignoreCase;
+  private NullHandling nullHandling;
+  private String property;
+
+  public OrderImpl() {
+  }
+
+  public void setDirection(Direction direction) {
+    this.direction = direction;
+  }
+
+  public void setIgnoreCase(boolean ignoreCase) {
+    this.ignoreCase = ignoreCase;
+  }
+
+  public void setNullHandling(NullHandling nullHandling) {
+    this.nullHandling = nullHandling;
+  }
+
+  public void setProperty(String property) {
+    this.property = property;
+  }
 
   /**
    * Creates a new {@link Order} instance. if order is {@literal null} then order defaults to
