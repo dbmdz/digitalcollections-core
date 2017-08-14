@@ -99,9 +99,23 @@ public class MimeType {
     }
   }
 
-  /** Given a nexisting MIME type name, look up the corresponding instance **/
+  /** Given an existing MIME type name, look up the corresponding instance.
+   *
+   *  An exception is made for vendor-specific types or non-standard types.
+   * **/
   public static MimeType fromTypename(String typeName) {
-    return knownTypes.get(typeName);
+    MimeType knownType = knownTypes.get(typeName);
+    if (knownType != null) {
+      return knownType;
+    }
+    MimeType unknownType = new MimeType(typeName);
+    if (!unknownType.getPrimaryType().startsWith("x-") ||
+        !unknownType.getSubType().startsWith("vnd.") ||
+        !unknownType.getSubType().startsWith("prs.")) {
+      return null;
+    } else {
+      return unknownType;
+    }
   }
 
   // NOTE: Constructors are private, since we want users to rely on the pre-defined MIME types
