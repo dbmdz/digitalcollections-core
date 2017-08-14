@@ -62,4 +62,9 @@ public class MimeTypeTest {
   public void testHandlesUppercase() throws Exception {
     assertThat(MimeType.fromFilename("INFO.TIF").matches(MimeType.MIME_IMAGE_TIF));
   }
+
+  @Test
+  public void knowsOfTypesWithoutExtensions() throws Exception {
+    assertThat(MimeType.fromTypename("text/xml")).isNotNull();
+  }
 }

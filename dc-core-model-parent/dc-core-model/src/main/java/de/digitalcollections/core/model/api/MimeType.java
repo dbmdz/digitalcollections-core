@@ -16,10 +16,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import com.google.common.base.Splitter;
 import org.apache.commons.io.FilenameUtils;
 
 public class MimeType {
   private static Map<String, MimeType> knownTypes;
+
+  /** Regular Expression used for decoding a MIME type **/
+  private static final Pattern MIME_PATTERN = Pattern.compile(
+      "^(?<primaryType>[-a-z]+?)/(?<subType>[-\\\\.a-z0-9*]+?)(?:\\+(?<suffix>\\w+))?$");
 
   static {
     // Load list of known MIME types and their extensions from the IANA list in the
@@ -27,9 +32,14 @@ public class MimeType {
     InputStream mimeStream = MimeType.class
         .getClassLoader().getResourceAsStream("mime.types");
     BufferedReader mimeReader = new BufferedReader(new InputStreamReader(mimeStream));
-    knownTypes = mimeReader.lines()
-        // Ignore commented-out lines
-        .filter(l -> !l.startsWith("#"))
+    List<String> typeStrings = mimeReader.lines()
+        .map(l -> l.replaceAll("^# ", ""))
+        .filter(l -> MIME_PATTERN.matcher(Splitter.on('\t').trimResults().omitEmptyStrings().split(l).iterator().next()).matches())
+        .collect(Collectors.toList());
+
+    knownTypes = typeStrings.stream()
+        // Strip comments
+        .filter(l -> l.contains("\t"))
         // Normalize multiple tab-delimiters to a single one for easier parsing
         // and split into (type, extensions) pairs
         .map(l -> l.replaceAll("\\t+", "\t").split("\\t"))
@@ -38,6 +48,10 @@ public class MimeType {
         .collect(Collectors.toMap(
             MimeType::getTypeName,
             Function.identity()));
+    typeStrings.stream()
+        .filter(l -> !l.contains("\t"))
+        .map(t -> new MimeType(t, Collections.emptyList()))
+        .forEach(m -> knownTypes.put(m.getTypeName(), m));
 
     // Some custom overrides to influence the order of file extensions
     // Since these are added to the end of the list, they take precedence over the
@@ -58,10 +72,6 @@ public class MimeType {
   public static final MimeType MIME_IMAGE_JPEG = knownTypes.get("image/jpeg");
   public static final MimeType MIME_IMAGE_TIF = knownTypes.get("image/tiff");
   public static final MimeType MIME_IMAGE_PNG = knownTypes.get("image/png");
-
-  /** Regular Expression used for decoding a MIME type **/
-  private final Pattern mimePattern = Pattern.compile(
-      "^(?<primaryType>[-a-z]+?)/(?<subType>[-\\\\.a-z0-9*]+?)(?:\\+(?<suffix>\\w+))?$");
 
   private final String primaryType;
   private final String subType;
@@ -129,7 +139,7 @@ public class MimeType {
       this.subType = "*";
       this.suffix = "";
     } else {
-      Matcher matcher = mimePattern.matcher(typeName);
+      Matcher matcher = MIME_PATTERN.matcher(typeName);
       if (!matcher.matches()) {
         throw new IllegalArgumentException(String.format("%s is not a valid MIME type!", typeName));
       }
