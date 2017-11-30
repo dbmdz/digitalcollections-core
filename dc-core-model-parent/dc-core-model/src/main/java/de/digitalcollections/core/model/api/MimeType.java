@@ -9,6 +9,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -21,6 +22,7 @@ import org.apache.commons.io.FilenameUtils;
 
 public class MimeType {
   private static Map<String, MimeType> knownTypes;
+  private static Map<String, String> extensionMapping;
 
   /** Regular Expression used for decoding a MIME type **/
   private static final Pattern MIME_PATTERN = Pattern.compile(
@@ -62,6 +64,14 @@ public class MimeType {
     List<String> xmlExtensions = new ArrayList<>(knownTypes.get("application/xml").getExtensions());
     xmlExtensions.add("ent");
     knownTypes.get("application/xml").setExtensions(xmlExtensions);
+
+    extensionMapping = new HashMap<>();
+    for (Map.Entry<String, MimeType> entry : knownTypes.entrySet()) {
+      String typeName = entry.getKey();
+      for (String ext : entry.getValue().getExtensions()) {
+        extensionMapping.put(ext, typeName);
+      }
+    }
   }
 
   /** Convenience definitions for commonly used MIME types */
@@ -86,9 +96,12 @@ public class MimeType {
     } else {
       extension = ext.toLowerCase();
     }
-    return knownTypes.values().stream()
-        .filter(m -> m.getExtensions().contains(extension))
-        .findFirst().orElseGet(() -> null);
+    String typeName = extensionMapping.get(extension);
+    if (typeName != null) {
+      return knownTypes.get(typeName);
+    } else {
+      return null;
+    }
   }
 
   /**
