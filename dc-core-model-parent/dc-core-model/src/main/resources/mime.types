@@ -1544,7 +1544,7 @@ image/g3fax					g3
 image/gif					gif
 image/ief					ief
 # image/jls
-# image/jp2
+image/jp2					jp2
 image/jpeg					jpeg jpg jpe
 # image/jpm
 # image/jpx
