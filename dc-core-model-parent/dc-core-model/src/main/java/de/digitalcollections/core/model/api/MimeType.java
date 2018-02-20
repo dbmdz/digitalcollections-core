@@ -32,10 +32,11 @@ public class MimeType {
     // Load list of known MIME types and their extensions from the IANA list in the
     // package resources (obtained from https://svn.apache.org/repos/asf/httpd/httpd/trunk/docs/conf/mime.types)
     InputStream mimeStream = MimeType.class
-        .getClassLoader().getResourceAsStream("mime.types");
+        .getClassLoader().getResourceAsStream("dc.core.mime.types");
     BufferedReader mimeReader = new BufferedReader(new InputStreamReader(mimeStream));
     List<String> typeStrings = mimeReader.lines()
         .map(l -> l.replaceAll("^# ", ""))
+        .filter(l -> !l.isEmpty())
         .filter(l -> MIME_PATTERN.matcher(Splitter.on('\t').trimResults().omitEmptyStrings().split(l).iterator().next()).matches())
         .collect(Collectors.toList());
 
