@@ -27,7 +27,7 @@ public interface ResourceRepository<R extends Resource> {
 
   byte[] getBytes(R resource) throws ResourceIOException;
 
-  public Document getDocument(R resource) throws ResourceIOException;
+  Document getDocument(R resource) throws ResourceIOException;
 
   default Document getDocument(String key, ResourcePersistenceType resourcePersistenceType) throws ResourceIOException {
     Resource resource = find(key, resourcePersistenceType, MimeType.fromExtension("xml"));
