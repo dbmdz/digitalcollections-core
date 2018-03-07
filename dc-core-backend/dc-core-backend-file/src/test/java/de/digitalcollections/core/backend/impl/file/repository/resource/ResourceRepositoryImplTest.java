@@ -1,13 +1,11 @@
 package de.digitalcollections.core.backend.impl.file.repository.resource;
 
-import static de.digitalcollections.core.model.api.resource.enums.ResourcePersistenceType.RESOLVED;
-import static org.assertj.core.api.Assertions.assertThat;
-
 import de.digitalcollections.core.backend.api.resource.ResourceRepository;
 import de.digitalcollections.core.config.SpringConfigBackendFile;
 import de.digitalcollections.core.model.api.MimeType;
 import de.digitalcollections.core.model.api.resource.Resource;
 import de.digitalcollections.core.model.api.resource.enums.ResourcePersistenceType;
+import de.digitalcollections.core.model.api.resource.exceptions.ResourceIOException;
 import java.net.URI;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -21,6 +19,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+
+import static de.digitalcollections.core.model.api.resource.enums.ResourcePersistenceType.RESOLVED;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {SpringConfigBackendFile.class})
@@ -49,6 +52,16 @@ public class ResourceRepositoryImplTest {
 
   @After
   public void tearDown() {
+  }
+
+  @Test
+  public void testReadXMLDocument() throws ResourceIOException {
+    String key = "snafu";
+    ResourcePersistenceType resourcePersistenceType = RESOLVED;
+    Document document = resourceRepository.getDocument(key, resourcePersistenceType);
+    Node rootElement = document.getElementsByTagName("rootElement").item(0);
+    String textContent = rootElement.getTextContent();
+    Assert.assertEquals("SNAFU", textContent);
   }
 
   /**
@@ -99,7 +112,7 @@ public class ResourceRepositoryImplTest {
     URI result = resource.getUri();
     Assert.assertEquals(expResult, result);
 
-    long expSize = 65;
+    long expSize = 71;
     long size = resource.getSize();
     Assert.assertEquals(expSize, size);
 

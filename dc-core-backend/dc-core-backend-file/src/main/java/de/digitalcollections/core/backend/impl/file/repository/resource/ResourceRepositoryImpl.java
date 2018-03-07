@@ -21,6 +21,10 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
+import javax.xml.XMLConstants;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.ReaderInputStream;
 import org.slf4j.Logger;
@@ -29,6 +33,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.Assert;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 /**
  * A binary repository using filesystem. see http://docs.oracle.com/javase/tutorial/essential/io/fileio.html see
@@ -52,6 +58,28 @@ public class ResourceRepositoryImpl implements ResourceRepository<Resource> {
     List<URI> uris = getUris(key, resourcePersistenceType, mimeType);
     resource.setUri(uris.get(0));
     return resource;
+  }
+
+  @Override
+  public Document getDocument(Resource resource) throws ResourceIOException {
+    Document doc = null;
+    try {
+      // get InputStream on resource
+      try (InputStream is = getInputStream(resource)) {
+        // create Document
+        DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+        dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        dbf.setNamespaceAware(true);
+        DocumentBuilder db = dbf.newDocumentBuilder();
+        doc = db.parse(is);
+      }
+      if (LOGGER.isDebugEnabled()) {
+        LOGGER.debug("Got document: " + doc);
+      }
+    } catch (IOException | ParserConfigurationException | SAXException ex) {
+      throw new ResourceIOException("Cannot read document from resolved resource '" + resource.getUri().toString() + "'", ex);
+    }
+    return doc;
   }
 
   private Resource getResource(String key, ResourcePersistenceType persistenceType, MimeType mimeType) {

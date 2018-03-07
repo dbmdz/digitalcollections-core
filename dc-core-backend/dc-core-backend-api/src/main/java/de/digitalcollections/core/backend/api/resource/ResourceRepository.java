@@ -7,6 +7,7 @@ import de.digitalcollections.core.model.api.resource.exceptions.ResourceIOExcept
 import java.io.InputStream;
 import java.io.Reader;
 import java.net.URI;
+import org.w3c.dom.Document;
 
 public interface ResourceRepository<R extends Resource> {
 
@@ -25,6 +26,13 @@ public interface ResourceRepository<R extends Resource> {
   }
 
   byte[] getBytes(R resource) throws ResourceIOException;
+
+  public Document getDocument(R resource) throws ResourceIOException;
+
+  default Document getDocument(String key, ResourcePersistenceType resourcePersistenceType) throws ResourceIOException {
+    Resource resource = find(key, resourcePersistenceType, MimeType.fromExtension("xml"));
+    return getDocument((R) resource);
+  }
 
   InputStream getInputStream(URI resourceUri) throws ResourceIOException;
 

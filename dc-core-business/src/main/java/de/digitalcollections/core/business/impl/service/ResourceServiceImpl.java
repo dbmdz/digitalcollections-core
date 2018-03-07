@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.net.URI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.Document;
 
 @Service
 public class ResourceServiceImpl implements ResourceService {
@@ -25,6 +26,11 @@ public class ResourceServiceImpl implements ResourceService {
   @Override
   public Resource get(String key, ResourcePersistenceType resourcePersistenceType, MimeType mimeType) throws ResourceIOException {
     return resourceRepository.find(key, resourcePersistenceType, mimeType);
+  }
+
+  @Override
+  public Document getDocument(Resource resource) throws ResourceIOException {
+    return resourceRepository.getDocument(resource);
   }
 
   @Override
