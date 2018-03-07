@@ -211,8 +211,8 @@ public class ResourceRepositoryImpl implements ResourceRepository<Resource> {
   @Override
   public void write(Resource resource, InputStream payload) throws ResourceIOException {
 
-    Assert.notNull(payload);
-    Assert.notNull(resource);
+    Assert.notNull(payload, "payload must not be null");
+    Assert.notNull(resource, "payload must not be null");
 
     if (resource.isReadonly()) {
       throw new ResourceIOException("Resource does not support write-operations.");
