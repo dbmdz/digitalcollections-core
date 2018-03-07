@@ -15,7 +15,7 @@ import org.w3c.dom.Document;
 @Service
 public class ResourceServiceImpl implements ResourceService {
 
-  @Autowired(required = false)
+  @Autowired
   private ResourceRepository resourceRepository;
 
   @Override
