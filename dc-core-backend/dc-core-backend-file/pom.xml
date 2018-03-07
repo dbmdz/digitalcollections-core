@@ -21,7 +21,7 @@
     </dependency>
     <dependency>
       <groupId>de.digitalcollections.commons</groupId>
-      <artifactId>digitalcollections-commons-yaml</artifactId>
+      <artifactId>dc-commons-yaml</artifactId>
     </dependency>
     <dependency>
       <groupId>de.digitalcollections.core</groupId>
