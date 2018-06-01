@@ -23,7 +23,7 @@
     <version.assertj>3.5.2</version.assertj>
     <version.commons-beanutils>1.9.3</version.commons-beanutils>
     <version.commons-io>2.5</version.commons-io>
-    <version.digitalcollections-commons>1.3.0-SNAPSHOT</version.digitalcollections-commons>
+    <version.digitalcollections-commons>1.3.0</version.digitalcollections-commons>
     <version.guava>23.0</version.guava>
     <version.jackson>2.9.4</version.jackson>
     <version.junit>4.12</version.junit>
