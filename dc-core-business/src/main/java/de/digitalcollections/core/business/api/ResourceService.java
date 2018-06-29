@@ -29,6 +29,19 @@ public interface ResourceService {
     return getDocument(resource);
   }
 
+  void assertDocument(Resource resource) throws ResourceIOException;
+
+  default void assertDocument(String key, ResourcePersistenceType resourcePersistenceType, String fileExtension) throws ResourceIOException {
+    try {
+      Resource resource = get(key, resourcePersistenceType, MimeType.fromExtension(fileExtension));
+      assertDocument(resource);
+    } catch ( ResourceIOException e ) {
+      throw e;
+    } catch ( Exception e) {
+      throw new ResourceIOException(e.getMessage());
+    }
+  }
+
   InputStream getInputStream(Resource resource) throws ResourceIOException;
 
   InputStream getInputStream(URI resourceUri) throws ResourceIOException;

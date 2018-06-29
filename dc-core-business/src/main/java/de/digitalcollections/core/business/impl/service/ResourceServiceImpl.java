@@ -47,4 +47,9 @@ public class ResourceServiceImpl implements ResourceService {
   public void write(Resource resource, String input) throws ResourceIOException {
     resourceRepository.write(resource, input);
   }
+
+  @Override
+  public void assertDocument(Resource resource) throws ResourceIOException {
+    resourceRepository.assertDocument(resource);
+  }
 }

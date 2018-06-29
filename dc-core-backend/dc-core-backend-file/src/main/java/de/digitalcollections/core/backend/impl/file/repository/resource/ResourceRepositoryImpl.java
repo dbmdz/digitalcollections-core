@@ -245,4 +245,16 @@ public class ResourceRepositoryImpl implements ResourceRepository<Resource> {
     }
   }
 
+  @Override
+  public void assertDocument(Resource resource) throws ResourceIOException {
+    try (InputStream is = getInputStream(resource)) {
+      if ( is.available() <= 0) {
+        throw new ResourceIOException("Cannot read " + resource.getFilename() + ": Empty file");
+      }
+    } catch ( ResourceIOException e) {
+      throw new ResourceIOException("Cannot read " + resource.getFilename() + ": Empty file");
+    } catch (Exception e) {
+      throw new ResourceIOException("Cannot read " + resource.getFilename() + ": " + e.getMessage());
+    }
+  }
 }

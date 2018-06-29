@@ -44,4 +44,5 @@ public interface ResourceRepository<R extends Resource> {
 
   void write(Resource resource, InputStream inputStream) throws ResourceIOException;
 
+  void assertDocument(Resource resource) throws ResourceIOException;
 }
